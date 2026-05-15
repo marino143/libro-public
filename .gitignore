@@ -1,0 +1,59 @@
+# ─── Secrets — NIKAD u git ───────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*-secret*
+*-credentials*
+
+# ─── User config (per-instalacija) ───────────────────────────────────────
+libro-config.json
+
+# ─── User data folderi (sve što user spremi) ─────────────────────────────
+# Pošto su nazivi config-driven, najsigurnije je ignorirati uobičajene patterne.
+Invoice */
+IZVODI */
+Izvodi */
+Izlazni racuni */
+Knjigovodstvo dokumenti/
+
+# ─── Generated output ────────────────────────────────────────────────────
+libro-data.json
+libro-claude-usage.json
+
+# ─── Annotations / runtime state (per-instalacija) ───────────────────────
+libro-forwarded.json
+libro-ignored.json
+libro-emails-sent.json
+libro-bank-emails-sent.json
+libro-not-sent-statements.json
+libro-invoice-metadata.json
+libro-tx-overrides.json
+libro-invoice-dates.json
+libro-clients.json
+libro-reminders.json
+libro-outgoing-old.json
+libro-accountant-emails.json
+libro-accountant-docs-meta.json
+libro-accountant-categories.json
+
+# ─── Node ────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log
+.npm/
+
+# ─── OS ──────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# ─── Editors ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── Logs ────────────────────────────────────────────────────────────────
+/tmp/libro-*.log
+*.log

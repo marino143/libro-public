@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "setupCompleted": false,
+  "supplier": {
+    "name": "",
+    "oib": "",
+    "country": "HR",
+    "address": "",
+    "city": "",
+    "postalCode": "",
+    "email": "",
+    "website": "",
+    "iban": "",
+    "swift": "",
+    "bank": ""
+  },
+  "folders": {
+    "root": "",
+    "incomingInvoices": "Invoice {year}",
+    "bankStatements": "Izvodi {year}",
+    "outgoingInvoices": "Izlazni racuni {year}",
+    "accountantDocs": "Knjigovodstvo dokumenti"
+  },
+  "ai": {
+    "enabled": false,
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5",
+    "dailyLimitUSD": 2
+  },
+  "accounting": {
+    "enabled": false,
+    "primaryEmail": "",
+    "secondaryEmails": [],
+    "eRacuniInbox": "",
+    "autoForwardBankStatements": false
+  },
+  "bank": {
+    "parser": "auto",
+    "name": "",
+    "accountNumber": "",
+    "statementSenderEmail": ""
+  },
+  "gmail": {
+    "enabled": false,
+    "primaryAccount": "",
+    "secondaryAccount": ""
+  },
+  "ui": {
+    "appName": "libro",
+    "locale": "hr",
+    "currency": "EUR",
+    "defaultYear": null
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "libro-local",
+  "version": "1.0.0",
+  "description": "Local libro processor + server",
+  "type": "module",
+  "scripts": {
+    "rebuild": "node local-libro.mjs",
+    "start": "node libro-server.mjs",
+    "dev": "./rebuild.sh"
+  }
+}
