@@ -1526,6 +1526,7 @@
   }
 
 </style>
+<script src="i18n.js"></script>
 <script>
 // Bootstrap: učitaj libro-config prije main JS bloka, pa postavi window.LIBRO_CONFIG.
 // Ako setup nije gotov, redirektaj na /setup.html.
@@ -1543,7 +1544,17 @@
     var xhr2 = new XMLHttpRequest();
     xhr2.open('GET', '/api/config', false);
     xhr2.send(null);
-    if (xhr2.status === 200) window.LIBRO_CONFIG = JSON.parse(xhr2.responseText);
+    if (xhr2.status === 200) {
+      window.LIBRO_CONFIG = JSON.parse(xhr2.responseText);
+      // Sync locale iz configa u i18n (samo prvi put — kasnije localStorage pobjeđuje)
+      try {
+        if (window.LIBRO_CONFIG && window.LIBRO_CONFIG.ui && window.LIBRO_CONFIG.ui.locale &&
+            !localStorage.getItem('libro.locale') &&
+            window.LibroI18N && window.LIBRO_CONFIG.ui.locale !== window.LibroI18N.getLocale()) {
+          window.LibroI18N.setLocale(window.LIBRO_CONFIG.ui.locale);
+        }
+      } catch (_) {}
+    }
   } catch (e) { window.LIBRO_CONFIG = null; }
 })();
 </script>
@@ -1578,35 +1589,36 @@
     <span style="display:none;" id="countArchive">0</span>
 
     <div class="nav-section">
-      <div class="nav-label">Dolazno</div>
-      <div class="nav-item active" data-view="inbox" data-tab="all"><span>Sve</span><span class="nav-count" id="nc-all">0</span></div>
-      <div class="nav-item alert" data-view="transactions" data-tab="missing" title="Uplate bez PDF računa — traži od dobavljača"><span>Fali PDF račun</span><span class="nav-count" id="nc-pending">0</span></div>
-      <div class="nav-item alert" data-view="inbox" data-tab="review" title="Imaju PDF u folderu, ali nisu poslani knjigovodstvu"><span>Čeka slanje</span><span class="nav-count" id="nc-review">0</span></div>
-      <div class="nav-item" data-view="inbox" data-tab="invoice"><span>Računi</span><span class="nav-count" id="nc-invoice">0</span></div>
-      <div class="nav-item" data-view="accountant-mail"><span>Knjigovodstvo · mailovi</span><span class="nav-count" id="nc-accountant-mail">0</span></div>
+      <div class="nav-label" data-i18n="nav.section.incoming">Dolazno</div>
+      <div class="nav-item active" data-view="inbox" data-tab="all"><span data-i18n="nav.all">Sve</span><span class="nav-count" id="nc-all">0</span></div>
+      <div class="nav-item alert" data-view="transactions" data-tab="missing" title="Uplate bez PDF računa — traži od dobavljača"><span data-i18n="nav.missing-pdf">Fali PDF račun</span><span class="nav-count" id="nc-pending">0</span></div>
+      <div class="nav-item alert" data-view="inbox" data-tab="review" title="Imaju PDF u folderu, ali nisu poslani knjigovodstvu"><span data-i18n="nav.pending-send">Čeka slanje</span><span class="nav-count" id="nc-review">0</span></div>
+      <div class="nav-item" data-view="inbox" data-tab="invoice"><span data-i18n="nav.invoices">Računi</span><span class="nav-count" id="nc-invoice">0</span></div>
+      <div class="nav-item" data-view="accountant-mail"><span data-i18n="nav.accountant">Knjigovodstvo</span><span class="nav-count" id="nc-accountant-mail">0</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Izlazno</div>
-      <div class="nav-item" data-view="outgoing"><span>Novi izlazni račun</span></div>
-      <div class="nav-item" data-view="outgoing-history"><span>Poslani računi</span><span class="nav-count" id="nc-outgoing">0</span></div>
-      <div class="nav-item" data-view="travel"><span>Putni nalog</span></div>
+      <div class="nav-label" data-i18n="nav.section.outgoing">Izlazno</div>
+      <div class="nav-item" data-view="outgoing"><span data-i18n="nav.new-outgoing">Novi izlazni račun</span></div>
+      <div class="nav-item" data-view="outgoing-history"><span data-i18n="nav.sent-invoices">Poslani računi</span><span class="nav-count" id="nc-outgoing">0</span></div>
+      <div class="nav-item" data-view="travel"><span data-i18n="nav.travel-order">Putni nalog</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Osobno</div>
-      <div class="nav-item" data-view="reminders"><span>Podsjetnici</span><span class="nav-count" id="nc-reminders">0</span></div>
+      <div class="nav-label" data-i18n="nav.section.personal">Osobno</div>
+      <div class="nav-item" data-view="reminders"><span data-i18n="nav.reminders">Podsjetnici</span><span class="nav-count" id="nc-reminders">0</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Arhiva</div>
-      <div class="nav-item" data-view="inbox" data-tab="forwarded"><span>Log prosljeđivanja</span><span class="nav-count" id="nc-forwarded">0</span></div>
-      <div class="nav-item" id="navDriveLink" style="display:none" onclick="(function(){var u=(window.LIBRO_CONFIG&&window.LIBRO_CONFIG.folders&&window.LIBRO_CONFIG.folders.driveUrl)||''; if(u) window.open(u,'_blank');})()"><span>Cloud folder ↗</span></div>
+      <div class="nav-label" data-i18n="nav.section.archive">Arhiva</div>
+      <div class="nav-item" data-view="inbox" data-tab="forwarded"><span data-i18n="nav.forwarded-log">Log prosljeđivanja</span><span class="nav-count" id="nc-forwarded">0</span></div>
+      <div class="nav-item" id="navDriveLink" style="display:none" onclick="(function(){var u=(window.LIBRO_CONFIG&&window.LIBRO_CONFIG.folders&&window.LIBRO_CONFIG.folders.driveUrl)||''; if(u) window.open(u,'_blank');})()"><span data-i18n="nav.cloud-folder">Cloud folder ↗</span></div>
     </div>
 
     <div class="sidebar-divider" style="margin-top:auto;"></div>
-    <div class="nav-section">
-      <div class="nav-item" data-view="settings"><span>Postavke</span></div>
+    <div class="nav-section" style="display:flex;align-items:center;gap:8px;justify-content:space-between;">
+      <div class="nav-item" data-view="settings" style="flex:1;"><span data-i18n="nav.settings">Postavke</span></div>
+      <button class="locale-switch-mini" data-i18n="locale.toggle" onclick="LibroI18N.toggle()" title="Toggle HR/EN" style="background:transparent;border:1px solid currentColor;color:inherit;padding:4px 10px;border-radius:999px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;opacity:0.7;">EN</button>
     </div>
 
     <div class="storage-box">
@@ -1677,7 +1689,7 @@
       <div class="tab" data-tab="forwarded" title="Računi već poslani knjigovodstvu">✓ Poslano <span class="tab-count" id="tc-forwarded">0</span></div>
       <div class="tab alert" data-tab="pending">◐ Čeka račun <span class="tab-count" id="tc-pending">0</span></div>
       <div class="tab" data-tab="invoice">Računi <span class="tab-count" id="tc-invoice">0</span></div>
-      <!-- Izvodi i Knjigovodstvo maknuti — dostupni preko "Knjigovodstvo · mailovi" view-a -->
+      <!-- Izvodi i Knjigovodstvo maknuti — dostupni preko "Knjigovodstvo" view-a -->
       <span style="display:none;" class="tab-count" id="tc-bank">0</span>
       <span style="display:none;" class="tab-count" id="tc-accountant">0</span>
     </div>
@@ -1958,7 +1970,7 @@
         <div class="page-subtitle" id="izvodiSubtitle">Popis izvoda + status slanja knjigovodstvu</div>
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="btn" onclick="switchView('accountant-mail')" title="Natrag na Knjigovodstvo · mailovi">← Natrag</button>
+        <button class="btn" onclick="switchView('accountant-mail')" title="Natrag na Knjigovodstvo">← Natrag</button>
         <button class="btn" onclick="syncMissingFromGmail(this)" style="background:#e8f0fe;color:#1a56a8;border-color:#1a56a8;" title="Skida nove HPB izvode direktno iz Gmaila + označi poslane">🔄 Sync izvodi</button>
         <button class="btn btn-primary" onclick="bulkSendStatements()" title="Pošalji sve neposlane izvode (jedan po jedan u Mail.app)">📧 Pošalji sve neposlane</button>
       </div>
@@ -2254,7 +2266,7 @@
    <section id="view-accountant-mail" class="view">
     <div class="header-row">
       <div>
-        <h1 class="page-title">Knjigovodstvo · mailovi</h1>
+        <h1 class="page-title">Knjigovodstvo</h1>
         <div class="page-subtitle">Emailovi od ADERA / Jasminke s prilozima — pretraživo, AI sortirano</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -3217,7 +3229,7 @@ async function loadInboxEmails() {
 }
 
 function refreshCounts() {
-  // "Sve" counter exkludira bank/accountant (oni su u "Knjigovodstvo · mailovi" view-u)
+  // "Sve" counter exkludira bank/accountant (oni su u "Knjigovodstvo" view-u)
   const counts = { all: emails.filter(e => e.type !== 'bank' && e.type !== 'accountant').length, pending: 0, review: 0, forwarded: 0, accountant: 0, bank: 0, invoice: 0 };
   emails.forEach(e => {
     // "Čeka račun" tab = placeholderi (TX bez PDF-a) + pending (demo)
@@ -3257,7 +3269,7 @@ function refreshCounts() {
 
 function emailsForTab(tab) {
   // "Sve" exkludira izvode (type='bank') i knjigovodstvo emailove —
-  // oni su u zasebnom view-u "Knjigovodstvo · mailovi"
+  // oni su u zasebnom view-u "Knjigovodstvo"
   if (tab === 'all') return emails.filter(e => e.type !== 'bank' && e.type !== 'accountant');
   if (tab === 'review')    return emails.filter(e => e.needsReview && !e.isPlaceholder && !e.isPending && e.localPath);
   if (tab === 'forwarded') return emails.filter(e => e.forwarded);

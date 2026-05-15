@@ -1538,6 +1538,7 @@
   #demo-banner a { color: #fff; text-decoration: underline; font-weight: 600; }
   body { padding-top: 36px !important; }
 </style>
+<script src="i18n.js"></script>
 <script src="mock-api.js"></script>
 <script>
 // Bootstrap: učitaj libro-config prije main JS bloka, pa postavi window.LIBRO_CONFIG.
@@ -1556,14 +1557,23 @@
     var xhr2 = new XMLHttpRequest();
     xhr2.open('GET', '/api/config', false);
     xhr2.send(null);
-    if (xhr2.status === 200) window.LIBRO_CONFIG = JSON.parse(xhr2.responseText);
+    if (xhr2.status === 200) {
+      window.LIBRO_CONFIG = JSON.parse(xhr2.responseText);
+      try {
+        if (window.LIBRO_CONFIG && window.LIBRO_CONFIG.ui && window.LIBRO_CONFIG.ui.locale &&
+            !localStorage.getItem('libro.locale') &&
+            window.LibroI18N && window.LIBRO_CONFIG.ui.locale !== window.LibroI18N.getLocale()) {
+          window.LibroI18N.setLocale(window.LIBRO_CONFIG.ui.locale);
+        }
+      } catch (_) {}
+    }
   } catch (e) { window.LIBRO_CONFIG = null; }
 })();
 </script>
 </head>
 <body>
-<div id="demo-banner">
-  🎮 <strong>DEMO mode</strong> — sve akcije (Rebuild, Upload, Send Mail, AI Chat) su simulirane · podaci su lažni (Acme Studio d.o.o.) ·
+<div id="demo-banner" data-i18n-html="demo.banner">
+  🎮 <strong>DEMO mode</strong> — sve akcije (Rebuild, Upload, Send Mail, AI Chat) su simulirane · podaci su lažni (codigit d.o.o.) ·
   <a href="https://github.com/marino143/libro-public" target="_blank">izvorni kod ↗</a>
 </div>
 <div class="app">
@@ -1595,35 +1605,36 @@
     <span style="display:none;" id="countArchive">0</span>
 
     <div class="nav-section">
-      <div class="nav-label">Dolazno</div>
-      <div class="nav-item active" data-view="inbox" data-tab="all"><span>Sve</span><span class="nav-count" id="nc-all">0</span></div>
-      <div class="nav-item alert" data-view="transactions" data-tab="missing" title="Uplate bez PDF računa — traži od dobavljača"><span>Fali PDF račun</span><span class="nav-count" id="nc-pending">0</span></div>
-      <div class="nav-item alert" data-view="inbox" data-tab="review" title="Imaju PDF u folderu, ali nisu poslani knjigovodstvu"><span>Čeka slanje</span><span class="nav-count" id="nc-review">0</span></div>
-      <div class="nav-item" data-view="inbox" data-tab="invoice"><span>Računi</span><span class="nav-count" id="nc-invoice">0</span></div>
-      <div class="nav-item" data-view="accountant-mail"><span>Knjigovodstvo · mailovi</span><span class="nav-count" id="nc-accountant-mail">0</span></div>
+      <div class="nav-label" data-i18n="nav.section.incoming">Dolazno</div>
+      <div class="nav-item active" data-view="inbox" data-tab="all"><span data-i18n="nav.all">Sve</span><span class="nav-count" id="nc-all">0</span></div>
+      <div class="nav-item alert" data-view="transactions" data-tab="missing" title="Uplate bez PDF računa — traži od dobavljača"><span data-i18n="nav.missing-pdf">Fali PDF račun</span><span class="nav-count" id="nc-pending">0</span></div>
+      <div class="nav-item alert" data-view="inbox" data-tab="review" title="Imaju PDF u folderu, ali nisu poslani knjigovodstvu"><span data-i18n="nav.pending-send">Čeka slanje</span><span class="nav-count" id="nc-review">0</span></div>
+      <div class="nav-item" data-view="inbox" data-tab="invoice"><span data-i18n="nav.invoices">Računi</span><span class="nav-count" id="nc-invoice">0</span></div>
+      <div class="nav-item" data-view="accountant-mail"><span data-i18n="nav.accountant">Knjigovodstvo</span><span class="nav-count" id="nc-accountant-mail">0</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Izlazno</div>
-      <div class="nav-item" data-view="outgoing"><span>Novi izlazni račun</span></div>
-      <div class="nav-item" data-view="outgoing-history"><span>Poslani računi</span><span class="nav-count" id="nc-outgoing">0</span></div>
-      <div class="nav-item" data-view="travel"><span>Putni nalog</span></div>
+      <div class="nav-label" data-i18n="nav.section.outgoing">Izlazno</div>
+      <div class="nav-item" data-view="outgoing"><span data-i18n="nav.new-outgoing">Novi izlazni račun</span></div>
+      <div class="nav-item" data-view="outgoing-history"><span data-i18n="nav.sent-invoices">Poslani računi</span><span class="nav-count" id="nc-outgoing">0</span></div>
+      <div class="nav-item" data-view="travel"><span data-i18n="nav.travel-order">Putni nalog</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Osobno</div>
-      <div class="nav-item" data-view="reminders"><span>Podsjetnici</span><span class="nav-count" id="nc-reminders">0</span></div>
+      <div class="nav-label" data-i18n="nav.section.personal">Osobno</div>
+      <div class="nav-item" data-view="reminders"><span data-i18n="nav.reminders">Podsjetnici</span><span class="nav-count" id="nc-reminders">0</span></div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-label">Arhiva</div>
-      <div class="nav-item" data-view="inbox" data-tab="forwarded"><span>Log prosljeđivanja</span><span class="nav-count" id="nc-forwarded">0</span></div>
-      <div class="nav-item" id="navDriveLink" style="display:none" onclick="(function(){var u=(window.LIBRO_CONFIG&&window.LIBRO_CONFIG.folders&&window.LIBRO_CONFIG.folders.driveUrl)||''; if(u) window.open(u,'_blank');})()"><span>Cloud folder ↗</span></div>
+      <div class="nav-label" data-i18n="nav.section.archive">Arhiva</div>
+      <div class="nav-item" data-view="inbox" data-tab="forwarded"><span data-i18n="nav.forwarded-log">Log prosljeđivanja</span><span class="nav-count" id="nc-forwarded">0</span></div>
+      <div class="nav-item" id="navDriveLink" style="display:none" onclick="(function(){var u=(window.LIBRO_CONFIG&&window.LIBRO_CONFIG.folders&&window.LIBRO_CONFIG.folders.driveUrl)||''; if(u) window.open(u,'_blank');})()"><span data-i18n="nav.cloud-folder">Cloud folder ↗</span></div>
     </div>
 
     <div class="sidebar-divider" style="margin-top:auto;"></div>
-    <div class="nav-section">
-      <div class="nav-item" data-view="settings"><span>Postavke</span></div>
+    <div class="nav-section" style="display:flex;align-items:center;gap:8px;justify-content:space-between;">
+      <div class="nav-item" data-view="settings" style="flex:1;"><span data-i18n="nav.settings">Postavke</span></div>
+      <button class="locale-switch-mini" data-i18n="locale.toggle" onclick="LibroI18N.toggle()" title="Toggle HR/EN" style="background:transparent;border:1px solid currentColor;color:inherit;padding:4px 10px;border-radius:999px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;opacity:0.7;">EN</button>
     </div>
 
     <div class="storage-box">
@@ -1694,7 +1705,7 @@
       <div class="tab" data-tab="forwarded" title="Računi već poslani knjigovodstvu">✓ Poslano <span class="tab-count" id="tc-forwarded">0</span></div>
       <div class="tab alert" data-tab="pending">◐ Čeka račun <span class="tab-count" id="tc-pending">0</span></div>
       <div class="tab" data-tab="invoice">Računi <span class="tab-count" id="tc-invoice">0</span></div>
-      <!-- Izvodi i Knjigovodstvo maknuti — dostupni preko "Knjigovodstvo · mailovi" view-a -->
+      <!-- Izvodi i Knjigovodstvo maknuti — dostupni preko "Knjigovodstvo" view-a -->
       <span style="display:none;" class="tab-count" id="tc-bank">0</span>
       <span style="display:none;" class="tab-count" id="tc-accountant">0</span>
     </div>
@@ -1975,7 +1986,7 @@
         <div class="page-subtitle" id="izvodiSubtitle">Popis izvoda + status slanja knjigovodstvu</div>
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="btn" onclick="switchView('accountant-mail')" title="Natrag na Knjigovodstvo · mailovi">← Natrag</button>
+        <button class="btn" onclick="switchView('accountant-mail')" title="Natrag na Knjigovodstvo">← Natrag</button>
         <button class="btn" onclick="syncMissingFromGmail(this)" style="background:#e8f0fe;color:#1a56a8;border-color:#1a56a8;" title="Skida nove HPB izvode direktno iz Gmaila + označi poslane">🔄 Sync izvodi</button>
         <button class="btn btn-primary" onclick="bulkSendStatements()" title="Pošalji sve neposlane izvode (jedan po jedan u Mail.app)">📧 Pošalji sve neposlane</button>
       </div>
@@ -2271,7 +2282,7 @@
    <section id="view-accountant-mail" class="view">
     <div class="header-row">
       <div>
-        <h1 class="page-title">Knjigovodstvo · mailovi</h1>
+        <h1 class="page-title">Knjigovodstvo</h1>
         <div class="page-subtitle">Emailovi od ADERA / Jasminke s prilozima — pretraživo, AI sortirano</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -2678,7 +2689,7 @@ const DEMO_PENDING = [
   { threadId: 'demo2', provider: 'OpenAI', service: 'ChatGPT Plus',
     amount: '22.00 €', date: '2026-04-14T10:00:00Z', daysSince: 7, isOverdue: true,
     billingUrl: 'https://platform.openai.com/account/billing/history', threadUrl: '#' },
-  { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · Acme',
+  { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · codigit',
     amount: '334.00 €', date: '2026-04-08T10:00:00Z', daysSince: 13, isOverdue: true,
     billingUrl: 'https://github.com/settings/billing', threadUrl: '#' },
 ];
@@ -3234,7 +3245,7 @@ async function loadInboxEmails() {
 }
 
 function refreshCounts() {
-  // "Sve" counter exkludira bank/accountant (oni su u "Knjigovodstvo · mailovi" view-u)
+  // "Sve" counter exkludira bank/accountant (oni su u "Knjigovodstvo" view-u)
   const counts = { all: emails.filter(e => e.type !== 'bank' && e.type !== 'accountant').length, pending: 0, review: 0, forwarded: 0, accountant: 0, bank: 0, invoice: 0 };
   emails.forEach(e => {
     // "Čeka račun" tab = placeholderi (TX bez PDF-a) + pending (demo)
@@ -3274,7 +3285,7 @@ function refreshCounts() {
 
 function emailsForTab(tab) {
   // "Sve" exkludira izvode (type='bank') i knjigovodstvo emailove —
-  // oni su u zasebnom view-u "Knjigovodstvo · mailovi"
+  // oni su u zasebnom view-u "Knjigovodstvo"
   if (tab === 'all') return emails.filter(e => e.type !== 'bank' && e.type !== 'accountant');
   if (tab === 'review')    return emails.filter(e => e.needsReview && !e.isPlaceholder && !e.isPending && e.localPath);
   if (tab === 'forwarded') return emails.filter(e => e.forwarded);
@@ -6566,13 +6577,13 @@ let accountingDocs = [];
 const DEMO_ACCOUNTING_DOCS = [
   // ──────────── 2026 (aktivna) ────────────
   { id: 1, year: 2026, period: 'Travanj 2026', type: 'PDV obrazac', category: 'Mjesečni',
-    filename: 'PDV_04-2026_acme.pdf', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'PDV_04-2026_codigit.pdf', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
     size: 186, retention: 11 },
   { id: 2, year: 2026, period: 'Travanj 2026', type: 'JOPPD', category: 'Mjesečni',
     filename: 'JOPPD_04-2026.xml', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
     size: 42, retention: 'permanent', retentionNote: 'Mirovinska evidencija — čuva se trajno' },
   { id: 3, year: 2026, period: 'Ožujak 2026', type: 'PDV obrazac', category: 'Mjesečni',
-    filename: 'PDV_03-2026_acme.pdf', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
+    filename: 'PDV_03-2026_codigit.pdf', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
     size: 178, retention: 11 },
   { id: 4, year: 2026, period: 'Ožujak 2026', type: 'JOPPD', category: 'Mjesečni',
     filename: 'JOPPD_03-2026.xml', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
@@ -6589,13 +6600,13 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2025 (završena — puna godina) ────────────
   { id: 10, year: 2025, period: '2025', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'GFI-POD_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 412, retention: 'permanent', retentionNote: 'Godišnji financijski izvještaj — čuva se trajno. Predano u FINU 28.04.2026.' },
   { id: 11, year: 2025, period: '2025', type: 'Bilanca', category: 'Godišnji',
-    filename: 'Bilanca_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'Bilanca_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 198, retention: 'permanent' },
   { id: 12, year: 2025, period: '2025', type: 'Račun dobiti i gubitka', category: 'Godišnji',
-    filename: 'RDG_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'RDG_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 156, retention: 'permanent' },
   { id: 13, year: 2025, period: '2025', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2025.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
@@ -6624,13 +6635,13 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2024 (starija) ────────────
   { id: 30, year: 2024, period: '2024', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'GFI-POD_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 398, retention: 'permanent' },
   { id: 31, year: 2024, period: '2024', type: 'Bilanca', category: 'Godišnji',
-    filename: 'Bilanca_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'Bilanca_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 192, retention: 'permanent' },
   { id: 32, year: 2024, period: '2024', type: 'Račun dobiti i gubitka', category: 'Godišnji',
-    filename: 'RDG_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'RDG_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 148, retention: 'permanent' },
   { id: 33, year: 2024, period: '2024', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2024.pdf', receivedDate: '22.04.2025', receivedFrom: 'marko@stari-knjigovodja.hr',
@@ -6638,7 +6649,7 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2023 ────────────
   { id: 40, year: 2023, period: '2023', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2023_acme.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',
+    filename: 'GFI-POD_2023_codigit.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',
     size: 376, retention: 'permanent' },
   { id: 41, year: 2023, period: '2023', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2023.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',

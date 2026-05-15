@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>libro · setup</title>
+<title data-i18n="brand.title.setup">libro · setup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -30,7 +30,22 @@
   }
   .wrap {
     max-width: 720px; margin: 0 auto; padding: 48px 24px 80px;
+    position: relative;
   }
+  .locale-switch {
+    position: absolute; top: 24px; right: 24px;
+    background: #fff;
+    border: 1px solid #d8d2c2;
+    color: var(--ink);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .locale-switch:hover { background: var(--accent-soft); }
   .brand {
     font-family: 'Fraunces', serif;
     font-size: 36px; font-weight: 400;
@@ -141,18 +156,22 @@
   }
   #demo-banner a { color: #fff; text-decoration: underline; font-weight: 600; }
   body { padding-top: 36px; }
+  .locale-switch { top: 60px !important; }
 </style>
+<script src="i18n.js"></script>
 <script src="mock-api.js"></script>
 </head>
 <body>
-<div id="demo-banner">
-  🎮 <strong>DEMO mode</strong> — wizard je pre-popunjen s Acme Studio podacima · "Spremi" će te odvesti na dashboard ·
+<div id="demo-banner" data-i18n-html="demo.banner.setup">
+  🎮 <strong>DEMO mode</strong> — wizard je pre-popunjen s codigit d.o.o. podacima · "Spremi" će te odvesti na dashboard ·
   <a href="https://github.com/marino143/libro-public" target="_blank">izvorni kod ↗</a>
 </div>
 <div class="wrap">
 
+  <button class="locale-switch" data-i18n="locale.toggle" onclick="LibroI18N.toggle()">EN</button>
+
   <h1 class="brand">libro</h1>
-  <p class="tagline">osobno računovodstvo · setup wizard</p>
+  <p class="tagline" data-i18n="setup.title">osobno računovodstvo · setup wizard</p>
 
   <div class="progress">
     <div class="dot active"></div>
@@ -164,29 +183,29 @@
 
   <!-- STEP 1: Folder -->
   <div class="card">
-    <h2><span class="step-num">1</span>Folder za račune</h2>
-    <p class="step-hint">Gdje su PDF-ovi računa i bankovni izvodi? libro skenira ovaj folder.</p>
+    <h2><span class="step-num">1</span><span data-i18n="setup.step1.title">Folder za račune</span></h2>
+    <p class="step-hint" data-i18n="setup.step1.hint">Gdje su PDF-ovi računa i bankovni izvodi? libro skenira ovaj folder.</p>
     <div class="field">
-      <label>Korijenski folder <span class="opt">(apsolutna putanja)</span></label>
+      <label><span data-i18n="setup.step1.root">Korijenski folder</span> <span class="opt" data-i18n="setup.step1.root.hint">(apsolutna putanja)</span></label>
       <input type="text" id="folderRoot" placeholder="/Users/ime/Documents/Racuni" value="">
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Dolazni računi <span class="opt">{year} = godina</span></label>
+        <label><span data-i18n="setup.step1.incoming">Dolazni računi</span> <span class="opt" data-i18n="setup.step1.incoming.hint">{year} = godina</span></label>
         <input type="text" id="folderIncoming" value="Invoice {year}">
       </div>
       <div class="field">
-        <label>Bankovni izvodi</label>
+        <label data-i18n="setup.step1.bank">Bankovni izvodi</label>
         <input type="text" id="folderBank" value="Izvodi {year}">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Izlazni računi</label>
+        <label data-i18n="setup.step1.outgoing">Izlazni računi</label>
         <input type="text" id="folderOutgoing" value="Izlazni racuni {year}">
       </div>
       <div class="field">
-        <label>Knjigovodstveni dokumenti</label>
+        <label data-i18n="setup.step1.accdocs">Knjigovodstveni dokumenti</label>
         <input type="text" id="folderAccDocs" value="Knjigovodstvo dokumenti">
       </div>
     </div>
@@ -194,45 +213,45 @@
 
   <!-- STEP 2: Tvoji podaci -->
   <div class="card">
-    <h2><span class="step-num">2</span>Tvoji podaci (firma / obrt)</h2>
-    <p class="step-hint">Pojavljuju se na izlaznim računima i putnim nalozima. Sve je opcionalno — popuni kad budeš trebao.</p>
+    <h2><span class="step-num">2</span><span data-i18n="setup.step2.title">Tvoji podaci (firma / obrt)</span></h2>
+    <p class="step-hint" data-i18n="setup.step2.hint">Pojavljuju se na izlaznim računima i putnim nalozima. Sve je opcionalno — popuni kad budeš trebao.</p>
     <div class="field-row">
       <div class="field">
-        <label>Naziv firme <span class="opt">(opcionalno)</span></label>
+        <label><span data-i18n="setup.step2.name">Naziv firme</span> <span class="opt" data-i18n="setup.step2.optional">(opcionalno)</span></label>
         <input type="text" id="supName" placeholder="npr. Acme d.o.o.">
       </div>
       <div class="field">
-        <label>OIB <span class="opt">(11 znamenki)</span></label>
+        <label><span data-i18n="setup.step2.oib">OIB</span> <span class="opt" data-i18n="setup.step2.oib.hint">(11 znamenki)</span></label>
         <input type="text" id="supOib" placeholder="12345678901">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Adresa</label>
+        <label data-i18n="setup.step2.address">Adresa</label>
         <input type="text" id="supAddress" placeholder="Ulica 12">
       </div>
       <div class="field">
-        <label>Grad / Poštanski broj</label>
+        <label data-i18n="setup.step2.city">Grad / Poštanski broj</label>
         <input type="text" id="supCity" placeholder="10000 Zagreb">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>IBAN</label>
+        <label data-i18n="setup.step2.iban">IBAN</label>
         <input type="text" id="supIban" placeholder="HR12 3456 7890 ...">
       </div>
       <div class="field">
-        <label>Banka <span class="opt">(naziv)</span></label>
+        <label><span data-i18n="setup.step2.bank">Banka</span> <span class="opt" data-i18n="setup.step2.bank.hint">(naziv)</span></label>
         <input type="text" id="supBank" placeholder="npr. Privredna banka Zagreb">
       </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Email</label>
+        <label data-i18n="setup.step2.email">Email</label>
         <input type="email" id="supEmail" placeholder="info@acme.hr">
       </div>
       <div class="field">
-        <label>Default valuta</label>
+        <label data-i18n="setup.step2.currency">Default valuta</label>
         <select id="supCurrency">
           <option value="EUR" selected>EUR</option>
           <option value="USD">USD</option>
@@ -246,31 +265,31 @@
 
   <!-- STEP 3: AI -->
   <div class="card">
-    <h2><span class="step-num">3</span>AI (Claude) za automatsku obradu</h2>
-    <p class="step-hint">AI parsira PDF račune, ekstrahira datume, matcha uplate s računima, kategorizira dokumente. Opcionalno — bez AI-a libro radi keyword matching.</p>
+    <h2><span class="step-num">3</span><span data-i18n="setup.step3.title">AI (Claude) za automatsku obradu</span></h2>
+    <p class="step-hint" data-i18n="setup.step3.hint">AI parsira PDF račune, ekstrahira datume, matcha uplate s računima, kategorizira dokumente. Opcionalno — bez AI-a libro radi keyword matching.</p>
     <label class="check">
       <input type="checkbox" id="aiEnabled" onchange="toggleNested('aiNested', this.checked)">
       <span class="check-body">
-        <span class="check-title">Uključi AI obradu</span>
-        <span class="check-sub">Treba Anthropic API key (~5-15 EUR/mj). <a class="help-link" href="https://console.anthropic.com/settings/keys" target="_blank">Dobij ovdje ↗</a></span>
+        <span class="check-title" data-i18n="setup.step3.enable.title">Uključi AI obradu</span>
+        <span class="check-sub"><span data-i18n="setup.step3.enable.sub">Treba Anthropic API key (~5-15 EUR/mj).</span> <a class="help-link" href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com ↗</a></span>
       </span>
     </label>
     <div class="nested" id="aiNested">
       <div class="field">
-        <label>Anthropic API key</label>
+        <label data-i18n="setup.step3.key">Anthropic API key</label>
         <input type="password" id="aiKey" placeholder="sk-ant-api03-...">
       </div>
       <div class="field-row">
         <div class="field">
-          <label>Model</label>
+          <label data-i18n="setup.step3.model">Model</label>
           <select id="aiModel">
-            <option value="claude-sonnet-4-5" selected>claude-sonnet-4-5 (preporuka)</option>
-            <option value="claude-haiku-4-5">claude-haiku-4-5 (jeftin)</option>
-            <option value="claude-opus-4-5">claude-opus-4-5 (najjači)</option>
+            <option value="claude-sonnet-4-5" selected>claude-sonnet-4-5</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+            <option value="claude-opus-4-5">claude-opus-4-5</option>
           </select>
         </div>
         <div class="field">
-          <label>Dnevni limit (USD)</label>
+          <label data-i18n="setup.step3.limit">Dnevni limit (USD)</label>
           <input type="text" id="aiLimit" value="2">
         </div>
       </div>
@@ -279,26 +298,26 @@
 
   <!-- STEP 4: Knjigovodstvo -->
   <div class="card">
-    <h2><span class="step-num">4</span>Knjigovodstvo · auto-forward</h2>
-    <p class="step-hint">Ako šalješ izvode i račune knjigovođi/e-računi portalu, libro može automatski forwardirati. Default: isključeno.</p>
+    <h2><span class="step-num">4</span><span data-i18n="setup.step4.title">Knjigovodstvo · auto-forward</span></h2>
+    <p class="step-hint" data-i18n="setup.step4.hint">Ako šalješ izvode i račune knjigovođi/e-računi portalu, libro može automatski forwardirati. Default: isključeno.</p>
     <label class="check">
       <input type="checkbox" id="accEnabled" onchange="toggleNested('accNested', this.checked)">
       <span class="check-body">
-        <span class="check-title">Uključi knjigovodstvo flow</span>
-        <span class="check-sub">"Pošalji knjigovodstvu" gumbi, auto-forward bank statements, accountant inbox.</span>
+        <span class="check-title" data-i18n="setup.step4.enable.title">Uključi knjigovodstvo flow</span>
+        <span class="check-sub" data-i18n="setup.step4.enable.sub">"Pošalji knjigovodstvu" gumbi, auto-forward bank statements, accountant inbox.</span>
       </span>
     </label>
     <div class="nested" id="accNested">
       <div class="field">
-        <label>Primarni email knjigovođe</label>
+        <label data-i18n="setup.step4.primary">Primarni email knjigovođe</label>
         <input type="email" id="accPrimary" placeholder="knjigovodstvo@firma.hr">
       </div>
       <div class="field">
-        <label>Sekundarni emaili <span class="opt">(odvojeno zarezom — bivši knjigovođe, druga osoba)</span></label>
+        <label><span data-i18n="setup.step4.secondary">Sekundarni emaili</span> <span class="opt" data-i18n="setup.step4.secondary.hint">(odvojeno zarezom — bivši knjigovođe, druga osoba)</span></label>
         <input type="text" id="accSecondary" placeholder="kontakt2@firma.hr, sefica@firma.hr">
       </div>
       <div class="field">
-        <label>e-Računi inbox <span class="opt">(npr. OIB@e-racuni.com za default recipient)</span></label>
+        <label><span data-i18n="setup.step4.eracuni">e-Računi inbox</span> <span class="opt" data-i18n="setup.step4.eracuni.hint">(npr. OIB@e-racuni.com za default recipient)</span></label>
         <input type="email" id="accEracuni" placeholder="OIB@e-racuni.com">
       </div>
     </div>
@@ -306,35 +325,35 @@
 
   <!-- STEP 5: Banka -->
   <div class="card">
-    <h2><span class="step-num">5</span>Banka · parser izvoda</h2>
-    <p class="step-hint">Za sync iz Gmaila i preciznu detekciju izvoda treba znati tvoju banku. Skip ako još ne znaš — kasnije u Settings.</p>
+    <h2><span class="step-num">5</span><span data-i18n="setup.step5.title">Banka · parser izvoda</span></h2>
+    <p class="step-hint" data-i18n="setup.step5.hint">Za sync iz Gmaila i preciznu detekciju izvoda treba znati tvoju banku. Skip ako još ne znaš — kasnije u Settings.</p>
     <div class="field-row">
       <div class="field">
-        <label>Naziv banke <span class="opt">(opcionalno)</span></label>
+        <label><span data-i18n="setup.step5.name">Naziv banke</span> <span class="opt" data-i18n="setup.step2.optional">(opcionalno)</span></label>
         <input type="text" id="bankName" placeholder="npr. HPB / PBZ / Erste">
       </div>
       <div class="field">
-        <label>Broj računa <span class="opt">(samo brojevi)</span></label>
+        <label><span data-i18n="setup.step5.account">Broj računa</span> <span class="opt" data-i18n="setup.step5.account.hint">(samo brojevi)</span></label>
         <input type="text" id="bankAccount" placeholder="1101386297">
       </div>
     </div>
     <div class="field">
-      <label>Email banke koji šalje izvode <span class="opt">(npr. kontakt.centar@hpb.hr)</span></label>
+      <label><span data-i18n="setup.step5.sender">Email banke koji šalje izvode</span> <span class="opt" data-i18n="setup.step5.sender.hint">(npr. kontakt.centar@hpb.hr)</span></label>
       <input type="email" id="bankSender" placeholder="izvodi@banka.hr">
     </div>
     <div class="field">
-      <label>Parser</label>
+      <label data-i18n="setup.step5.parser">Parser</label>
       <select id="bankParser">
-        <option value="auto" selected>Auto (XML camt.053 ako ima, inače AI)</option>
-        <option value="camt053">SEPA camt.053 XML (HPB, PBZ, Erste, ...)</option>
-        <option value="ai">AI (Claude Vision) — bilo koja banka, sporije</option>
+        <option value="auto" selected data-i18n="setup.step5.parser.auto">Auto (XML camt.053 ako ima, inače AI)</option>
+        <option value="camt053" data-i18n="setup.step5.parser.camt">SEPA camt.053 XML (HPB, PBZ, Erste, ...)</option>
+        <option value="ai" data-i18n="setup.step5.parser.ai">AI (Claude Vision) — bilo koja banka, sporije</option>
       </select>
     </div>
   </div>
 
   <div class="actions">
-    <button class="secondary" id="skipBtn" onclick="saveConfig(true)">Preskoči — popunit ću kasnije</button>
-    <button class="primary" id="saveBtn" onclick="saveConfig(false)">Spremi i otvori dashboard</button>
+    <button class="secondary" id="skipBtn" onclick="saveConfig(true)" data-i18n="btn.skip-later">Preskoči — popunit ću kasnije</button>
+    <button class="primary" id="saveBtn" onclick="saveConfig(false)" data-i18n="btn.save-open">Spremi i otvori dashboard</button>
   </div>
 </div>
 
@@ -352,7 +371,6 @@ function showToast(msg, isError) {
   setTimeout(() => t.classList.remove('show'), 3500);
 }
 
-// Pre-fill iz postojećeg configa (ako user pokreće wizard ponovno).
 async function loadExisting() {
   try {
     const r = await fetch('/api/config');
@@ -375,6 +393,9 @@ async function loadExisting() {
       $('supEmail').value = cfg.supplier.email || '';
     }
     if (cfg.ui && cfg.ui.currency) $('supCurrency').value = cfg.ui.currency;
+    if (cfg.ui && cfg.ui.locale && cfg.ui.locale !== window.LibroI18N.getLocale()) {
+      window.LibroI18N.setLocale(cfg.ui.locale);
+    }
     if (cfg.ai) {
       $('aiEnabled').checked = !!cfg.ai.enabled;
       toggleNested('aiNested', !!cfg.ai.enabled);
@@ -428,7 +449,7 @@ async function saveConfig(skipMode) {
     ui: {
       currency: $('supCurrency').value,
       appName: 'libro',
-      locale: 'hr',
+      locale: window.LibroI18N.getLocale(),
     },
     ai: {
       enabled: $('aiEnabled').checked,
@@ -451,17 +472,15 @@ async function saveConfig(skipMode) {
     },
   };
 
-  // Validacija
   if (!skipMode) {
     if (!updates.folders.root) {
-      showToast('Folder za račune je obavezan (Step 1)', true); btn.disabled = false; return;
+      showToast(t('setup.error.folder-required', 'Folder za račune je obavezan (Step 1)'), true); btn.disabled = false; return;
     }
     if (updates.accounting.enabled && !updates.accounting.primaryEmail) {
-      showToast('Knjigovodstvo uključen — primarni email je obavezan (Step 4)', true); btn.disabled = false; return;
+      showToast(t('setup.error.acc-email-required', 'Knjigovodstvo uključen — primarni email je obavezan (Step 4)'), true); btn.disabled = false; return;
     }
   }
 
-  // Spremi AI key u .env (preko poseban endpoint ako bi se dodalo). Za sad: instrukcije.
   const aiKey = $('aiKey').value.trim();
 
   try {
@@ -472,23 +491,22 @@ async function saveConfig(skipMode) {
     });
     const j = await res.json();
     if (!res.ok || !j.success) {
-      throw new Error(j.error || 'Spremanje neuspjelo');
+      throw new Error(j.error || 'Save failed');
     }
 
     if (aiKey) {
-      // Prikaži instrukcije za .env upis (server-side update .env nije implementiran zbog sigurnosti).
       alert(
-        'Config spremljen ✓\n\n' +
-        'Za AI key dodaj u .env fajl:\n' +
+        'Config saved ✓\n\n' +
+        'For AI key add to .env file:\n' +
         'ANTHROPIC_API_KEY=' + aiKey + '\n\n' +
-        'Pa restartaj server (`npm start`).'
+        'Then restart server (`npm start`).'
       );
     } else {
-      showToast('Setup gotov ✓ Otvaram dashboard…');
+      showToast(t('setup.toast.saved', 'Setup gotov ✓ Otvaram dashboard…'));
     }
     setTimeout(() => { window.location.href = '/dashboard.html'; }, 800);
   } catch (e) {
-    showToast('Greška: ' + e.message, true);
+    showToast('Error: ' + e.message, true);
     btn.disabled = false;
   }
 }

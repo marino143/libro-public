@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>libro · demo</title>
-<meta name="description" content="libro — lokalno osobno računovodstvo. Interaktivni demo (Acme Studio d.o.o.)">
+<title data-i18n="brand.title.demo">libro · demo</title>
+<meta name="description" content="libro — local personal accounting. Interactive demo (codigit d.o.o.)">
 <meta property="og:title" content="libro · demo">
-<meta property="og:description" content="Lokalno osobno računovodstvo. Skenira PDF račune i bankovne izvode iz lokalnog foldera, matcha uplate s računima, AI parsira nepoznate dokumente.">
+<meta property="og:description" content="Local personal accounting. Scans PDF invoices and bank statements from a local folder, matches payments to invoices, AI parses unknown documents.">
 <meta property="og:url" content="https://libro-demo.netlify.app">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,21 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 80px 28px 100px; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 80px 28px 100px; position: relative; }
+  .locale-switch {
+    position: absolute; top: 24px; right: 24px;
+    background: #fff;
+    border: 1px solid #d8d2c2;
+    color: #1a1a1a;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .locale-switch:hover { background: #f0ece2; }
   .brand {
     font-family: 'Fraunces', serif;
     font-size: 76px; font-weight: 400;
@@ -101,55 +115,58 @@
   }
   .meta a { color: #1a1a1a; }
 </style>
+<script src="i18n.js"></script>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="demo-pill">🎮 Demo · Acme Studio d.o.o.</div>
+  <button class="locale-switch" data-i18n="locale.toggle" onclick="LibroI18N.toggle()">EN</button>
+
+  <div class="demo-pill" data-i18n="demo.pill">🎮 Demo · codigit d.o.o.</div>
   <h1 class="brand">libro</h1>
-  <p class="tagline">osobno računovodstvo</p>
+  <p class="tagline" data-i18n="brand.tagline">osobno računovodstvo</p>
 
   <div class="intro">
-    <p>Lokalno osobno računovodstvo. Skenira PDF račune i bankovne izvode iz tvog foldera, matcha uplate s računima, AI parsira nepoznate dokumente, i opcionalno forwardira knjigovođi.</p>
-    <p>Sve ostaje lokalno — folderi na tvom disku, server na localhost-u, AI poziva direktno Anthropic API. Bez SaaS-a, bez čuvanja podataka na tuđim serverima.</p>
+    <p data-i18n="landing.intro.p1">Lokalno osobno računovodstvo. Skenira PDF račune i bankovne izvode iz tvog foldera, matcha uplate s računima, AI parsira nepoznate dokumente, i opcionalno forwardira knjigovođi.</p>
+    <p data-i18n="landing.intro.p2">Sve ostaje lokalno — folderi na tvom disku, server na localhost-u, AI poziva direktno Anthropic API. Bez SaaS-a, bez čuvanja podataka na tuđim serverima.</p>
   </div>
 
   <div class="cta-row">
-    <a class="cta primary" href="dashboard.html">Otvori dashboard →</a>
-    <a class="cta secondary" href="setup.html">Probaj setup wizard</a>
-    <a class="cta secondary" href="https://github.com/marino143/libro-public" target="_blank">GitHub ↗</a>
+    <a class="cta primary" href="dashboard.html" data-i18n="landing.cta.dashboard">Otvori dashboard →</a>
+    <a class="cta secondary" href="setup.html" data-i18n="landing.cta.setup">Probaj setup wizard</a>
+    <a class="cta secondary" href="https://github.com/marino143/libro-public" target="_blank" data-i18n="landing.cta.github">GitHub ↗</a>
   </div>
 
-  <h2>Što vidiš u demu</h2>
+  <h2 data-i18n="landing.features.title">Što vidiš u demu</h2>
 
   <div class="features">
     <div class="f">
-      <h3>📊 Dashboard s lažnim podacima</h3>
-      <p>4 mjeseca podataka za fiktivni "Acme Studio d.o.o." — 18 računa, 31 transakcija, 8 izvoda, 3 klijenta.</p>
+      <h3 data-i18n="landing.f1.title">📊 Dashboard s lažnim podacima</h3>
+      <p data-i18n="landing.f1.body">4 mjeseca podataka za fiktivni "codigit d.o.o." — 18 računa, 31 transakcija, 8 izvoda, 3 klijenta.</p>
     </div>
     <div class="f">
-      <h3>🔍 Matching transakcija ↔ računa</h3>
-      <p>Vidiš kako libro spaja uplate s PDF računima (status: MATCHED / MISSING / IGNORED / INCOMING).</p>
+      <h3 data-i18n="landing.f2.title">🔍 Matching transakcija ↔ računa</h3>
+      <p data-i18n="landing.f2.body">Vidiš kako libro spaja uplate s PDF računima (status: MATCHED / MISSING / IGNORED / INCOMING).</p>
     </div>
     <div class="f">
-      <h3>📑 Izlazni računi · putni nalozi</h3>
-      <p>Forma za generiranje XML/PDF izlaznog računa, klijent autocomplete, putni nalozi.</p>
+      <h3 data-i18n="landing.f3.title">📑 Izlazni računi · putni nalozi</h3>
+      <p data-i18n="landing.f3.body">Forma za generiranje XML/PDF izlaznog računa, klijent autocomplete, putni nalozi.</p>
     </div>
     <div class="f">
-      <h3>💬 AI chat (mock)</h3>
-      <p>U produkciji Claude analizira tvoj libro-data.json. U demu vraća pripremljen odgovor.</p>
+      <h3 data-i18n="landing.f4.title">💬 AI chat (mock)</h3>
+      <p data-i18n="landing.f4.body">U produkciji Claude analizira tvoj libro-data.json. U demu vraća pripremljen odgovor.</p>
     </div>
     <div class="f">
-      <h3>⚙️ Setup wizard</h3>
-      <p>5-koraka wizard koji vidi novi korisnik pri prvom pokretanju (folder, firma, AI, knjigovodstvo, banka).</p>
+      <h3 data-i18n="landing.f5.title">⚙️ Setup wizard</h3>
+      <p data-i18n="landing.f5.body">5-koraka wizard koji vidi novi korisnik pri prvom pokretanju (folder, firma, AI, knjigovodstvo, banka).</p>
     </div>
     <div class="f">
-      <h3>📁 Knjigovodstveni dokumenti</h3>
-      <p>Arhiva PDV obrazaca, JOPPD, godišnjih izvještaja — sve s retention politikama.</p>
+      <h3 data-i18n="landing.f6.title">📁 Knjigovodstveni dokumenti</h3>
+      <p data-i18n="landing.f6.body">Arhiva PDV obrazaca, JOPPD, godišnjih izvještaja — sve s retention politikama.</p>
     </div>
   </div>
 
-  <div class="meta">
+  <div class="meta" data-i18n-html="landing.meta">
     Demo je read-only — sve <code>POST</code> akcije (upload, rebuild, send mail) su no-op-i. Za stvarno korištenje:
     <code>git clone https://github.com/marino143/libro-public</code> →
     <code>node libro-server.mjs</code> → otvori <code>localhost:8765</code>.

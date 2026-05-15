@@ -2,20 +2,20 @@
   "version": 1,
   "setupCompleted": true,
   "supplier": {
-    "name": "Acme Studio d.o.o.",
-    "oib": "12345678901",
+    "name": "codigit d.o.o.",
+    "oib": "34317148047",
     "country": "HR",
-    "address": "Ilica 99",
-    "city": "Zagreb",
-    "postalCode": "10000",
-    "email": "info@acmestudio.example",
-    "website": "acmestudio.example",
-    "iban": "HR1212345678901234567",
-    "swift": "DEMOHRXX",
-    "bank": "Demo Bank d.d."
+    "address": "Obrež 20",
+    "city": "Sesvete-Soblinec",
+    "postalCode": "10360",
+    "email": "info@codigit.hr",
+    "website": "codigit.hr",
+    "iban": "HR5823900011101386297",
+    "swift": "HPBZHR2X",
+    "bank": "Hrvatska poštanska banka"
   },
   "folders": {
-    "root": "/Users/demo/Documents/AcmeStudio",
+    "root": "/Users/codigit/Documents/codigit-racunovodstvo",
     "incomingInvoices": "Invoice {year}",
     "bankStatements": "Izvodi {year}",
     "outgoingInvoices": "Izlazni racuni {year}",
@@ -31,13 +31,13 @@
     "enabled": true,
     "primaryEmail": "acc@example.com",
     "secondaryEmails": ["acc2@example.com"],
-    "eRacuniInbox": "12345678901@e-racuni.example",
+    "eRacuniInbox": "34317148047@e-racuni.example",
     "autoForwardBankStatements": false
   },
   "bank": {
     "parser": "auto",
-    "name": "Demo Bank",
-    "accountNumber": "1234567890",
+    "name": "HPB",
+    "accountNumber": "1101386297",
     "statementSenderEmail": "izvodi@example-bank.com"
   },
   "gmail": {
