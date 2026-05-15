@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>libro · setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f3ed;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --line: #e6e0d3;
+    --accent: #1a1a1a;
+    --accent-soft: #f0ece2;
+    --success: #1f7a3a;
+    --warn: #b07b1e;
+    --danger: #b03030;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    background: var(--bg); color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 720px; margin: 0 auto; padding: 48px 24px 80px;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 36px; font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+  }
+  .tagline { color: var(--ink-soft); font-size: 15px; margin: 0 0 32px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .step-num {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--ink);
+    width: 26px; height: 26px; line-height: 26px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 600;
+    margin-right: 10px;
+    font-size: 13px;
+  }
+  h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; margin: 0 0 4px; }
+  .step-hint { color: var(--ink-soft); font-size: 14px; margin: 0 0 18px; padding-left: 36px; }
+  .field { margin-bottom: 14px; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  label .opt { color: var(--ink-soft); font-weight: 400; font-size: 12px; }
+  input[type="text"], input[type="email"], input[type="password"], input[type="url"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--ink); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+  .check {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .check input { margin-top: 3px; }
+  .check-body { flex: 1; }
+  .check-title { font-weight: 500; }
+  .check-sub { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+  .nested { display: none; padding: 14px 16px 4px; border-left: 2px solid var(--line); margin: 12px 0 0 12px; }
+  .nested.open { display: block; }
+  .actions {
+    display: flex; gap: 12px; justify-content: flex-end;
+    margin-top: 24px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 14px; font-weight: 500;
+    padding: 11px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+  }
+  button.primary { background: var(--ink); color: #fff; }
+  button.primary:hover { background: #000; }
+  button.secondary { background: transparent; color: var(--ink); }
+  button.primary:disabled { background: #999; border-color: #999; cursor: not-allowed; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { background: var(--danger); }
+  .help-link { color: var(--ink-soft); font-size: 13px; text-decoration: underline; }
+  .progress {
+    display: flex; gap: 6px; margin-bottom: 28px;
+  }
+  .progress .dot {
+    height: 4px; flex: 1; background: var(--line); border-radius: 2px;
+  }
+  .progress .dot.active { background: var(--ink); }
+  /* ─── DEMO mode banner ─── */
+  #demo-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(90deg, #f5a623 0%, #f76b1c 100%);
+    color: #fff; padding: 9px 16px;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 13px; font-weight: 500;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #demo-banner a { color: #fff; text-decoration: underline; font-weight: 600; }
+  body { padding-top: 36px; }
+</style>
+<script src="mock-api.js"></script>
+</head>
+<body>
+<div id="demo-banner">
+  🎮 <strong>DEMO mode</strong> — wizard je pre-popunjen s Acme Studio podacima · "Spremi" će te odvesti na dashboard ·
+  <a href="https://github.com/marino143/libro-public" target="_blank">izvorni kod ↗</a>
+</div>
+<div class="wrap">
+
+  <h1 class="brand">libro</h1>
+  <p class="tagline">osobno računovodstvo · setup wizard</p>
+
+  <div class="progress">
+    <div class="dot active"></div>
+    <div class="dot active"></div>
+    <div class="dot active"></div>
+    <div class="dot active"></div>
+    <div class="dot active"></div>
+  </div>
+
+  <!-- STEP 1: Folder -->
+  <div class="card">
+    <h2><span class="step-num">1</span>Folder za račune</h2>
+    <p class="step-hint">Gdje su PDF-ovi računa i bankovni izvodi? libro skenira ovaj folder.</p>
+    <div class="field">
+      <label>Korijenski folder <span class="opt">(apsolutna putanja)</span></label>
+      <input type="text" id="folderRoot" placeholder="/Users/ime/Documents/Racuni" value="">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Dolazni računi <span class="opt">{year} = godina</span></label>
+        <input type="text" id="folderIncoming" value="Invoice {year}">
+      </div>
+      <div class="field">
+        <label>Bankovni izvodi</label>
+        <input type="text" id="folderBank" value="Izvodi {year}">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Izlazni računi</label>
+        <input type="text" id="folderOutgoing" value="Izlazni racuni {year}">
+      </div>
+      <div class="field">
+        <label>Knjigovodstveni dokumenti</label>
+        <input type="text" id="folderAccDocs" value="Knjigovodstvo dokumenti">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Tvoji podaci -->
+  <div class="card">
+    <h2><span class="step-num">2</span>Tvoji podaci (firma / obrt)</h2>
+    <p class="step-hint">Pojavljuju se na izlaznim računima i putnim nalozima. Sve je opcionalno — popuni kad budeš trebao.</p>
+    <div class="field-row">
+      <div class="field">
+        <label>Naziv firme <span class="opt">(opcionalno)</span></label>
+        <input type="text" id="supName" placeholder="npr. Acme d.o.o.">
+      </div>
+      <div class="field">
+        <label>OIB <span class="opt">(11 znamenki)</span></label>
+        <input type="text" id="supOib" placeholder="12345678901">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Adresa</label>
+        <input type="text" id="supAddress" placeholder="Ulica 12">
+      </div>
+      <div class="field">
+        <label>Grad / Poštanski broj</label>
+        <input type="text" id="supCity" placeholder="10000 Zagreb">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>IBAN</label>
+        <input type="text" id="supIban" placeholder="HR12 3456 7890 ...">
+      </div>
+      <div class="field">
+        <label>Banka <span class="opt">(naziv)</span></label>
+        <input type="text" id="supBank" placeholder="npr. Privredna banka Zagreb">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="supEmail" placeholder="info@acme.hr">
+      </div>
+      <div class="field">
+        <label>Default valuta</label>
+        <select id="supCurrency">
+          <option value="EUR" selected>EUR</option>
+          <option value="USD">USD</option>
+          <option value="GBP">GBP</option>
+          <option value="CHF">CHF</option>
+          <option value="HRK">HRK</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: AI -->
+  <div class="card">
+    <h2><span class="step-num">3</span>AI (Claude) za automatsku obradu</h2>
+    <p class="step-hint">AI parsira PDF račune, ekstrahira datume, matcha uplate s računima, kategorizira dokumente. Opcionalno — bez AI-a libro radi keyword matching.</p>
+    <label class="check">
+      <input type="checkbox" id="aiEnabled" onchange="toggleNested('aiNested', this.checked)">
+      <span class="check-body">
+        <span class="check-title">Uključi AI obradu</span>
+        <span class="check-sub">Treba Anthropic API key (~5-15 EUR/mj). <a class="help-link" href="https://console.anthropic.com/settings/keys" target="_blank">Dobij ovdje ↗</a></span>
+      </span>
+    </label>
+    <div class="nested" id="aiNested">
+      <div class="field">
+        <label>Anthropic API key</label>
+        <input type="password" id="aiKey" placeholder="sk-ant-api03-...">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Model</label>
+          <select id="aiModel">
+            <option value="claude-sonnet-4-5" selected>claude-sonnet-4-5 (preporuka)</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5 (jeftin)</option>
+            <option value="claude-opus-4-5">claude-opus-4-5 (najjači)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Dnevni limit (USD)</label>
+          <input type="text" id="aiLimit" value="2">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Knjigovodstvo -->
+  <div class="card">
+    <h2><span class="step-num">4</span>Knjigovodstvo · auto-forward</h2>
+    <p class="step-hint">Ako šalješ izvode i račune knjigovođi/e-računi portalu, libro može automatski forwardirati. Default: isključeno.</p>
+    <label class="check">
+      <input type="checkbox" id="accEnabled" onchange="toggleNested('accNested', this.checked)">
+      <span class="check-body">
+        <span class="check-title">Uključi knjigovodstvo flow</span>
+        <span class="check-sub">"Pošalji knjigovodstvu" gumbi, auto-forward bank statements, accountant inbox.</span>
+      </span>
+    </label>
+    <div class="nested" id="accNested">
+      <div class="field">
+        <label>Primarni email knjigovođe</label>
+        <input type="email" id="accPrimary" placeholder="knjigovodstvo@firma.hr">
+      </div>
+      <div class="field">
+        <label>Sekundarni emaili <span class="opt">(odvojeno zarezom — bivši knjigovođe, druga osoba)</span></label>
+        <input type="text" id="accSecondary" placeholder="kontakt2@firma.hr, sefica@firma.hr">
+      </div>
+      <div class="field">
+        <label>e-Računi inbox <span class="opt">(npr. OIB@e-racuni.com za default recipient)</span></label>
+        <input type="email" id="accEracuni" placeholder="OIB@e-racuni.com">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Banka -->
+  <div class="card">
+    <h2><span class="step-num">5</span>Banka · parser izvoda</h2>
+    <p class="step-hint">Za sync iz Gmaila i preciznu detekciju izvoda treba znati tvoju banku. Skip ako još ne znaš — kasnije u Settings.</p>
+    <div class="field-row">
+      <div class="field">
+        <label>Naziv banke <span class="opt">(opcionalno)</span></label>
+        <input type="text" id="bankName" placeholder="npr. HPB / PBZ / Erste">
+      </div>
+      <div class="field">
+        <label>Broj računa <span class="opt">(samo brojevi)</span></label>
+        <input type="text" id="bankAccount" placeholder="1101386297">
+      </div>
+    </div>
+    <div class="field">
+      <label>Email banke koji šalje izvode <span class="opt">(npr. kontakt.centar@hpb.hr)</span></label>
+      <input type="email" id="bankSender" placeholder="izvodi@banka.hr">
+    </div>
+    <div class="field">
+      <label>Parser</label>
+      <select id="bankParser">
+        <option value="auto" selected>Auto (XML camt.053 ako ima, inače AI)</option>
+        <option value="camt053">SEPA camt.053 XML (HPB, PBZ, Erste, ...)</option>
+        <option value="ai">AI (Claude Vision) — bilo koja banka, sporije</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="secondary" id="skipBtn" onclick="saveConfig(true)">Preskoči — popunit ću kasnije</button>
+    <button class="primary" id="saveBtn" onclick="saveConfig(false)">Spremi i otvori dashboard</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function $(id) { return document.getElementById(id); }
+function toggleNested(id, open) { $(id).classList.toggle('open', !!open); }
+
+function showToast(msg, isError) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Pre-fill iz postojećeg configa (ako user pokreće wizard ponovno).
+async function loadExisting() {
+  try {
+    const r = await fetch('/api/config');
+    if (!r.ok) return;
+    const cfg = await r.json();
+    if (cfg.folders) {
+      $('folderRoot').value = cfg.folders.root || '';
+      $('folderIncoming').value = cfg.folders.incomingInvoices || 'Invoice {year}';
+      $('folderBank').value = cfg.folders.bankStatements || 'Izvodi {year}';
+      $('folderOutgoing').value = cfg.folders.outgoingInvoices || 'Izlazni racuni {year}';
+      $('folderAccDocs').value = cfg.folders.accountantDocs || 'Knjigovodstvo dokumenti';
+    }
+    if (cfg.supplier) {
+      $('supName').value = cfg.supplier.name || '';
+      $('supOib').value = cfg.supplier.oib || '';
+      $('supAddress').value = cfg.supplier.address || '';
+      $('supCity').value = [cfg.supplier.postalCode, cfg.supplier.city].filter(Boolean).join(' ');
+      $('supIban').value = cfg.supplier.iban || '';
+      $('supBank').value = cfg.supplier.bank || '';
+      $('supEmail').value = cfg.supplier.email || '';
+    }
+    if (cfg.ui && cfg.ui.currency) $('supCurrency').value = cfg.ui.currency;
+    if (cfg.ai) {
+      $('aiEnabled').checked = !!cfg.ai.enabled;
+      toggleNested('aiNested', !!cfg.ai.enabled);
+      if (cfg.ai.model) $('aiModel').value = cfg.ai.model;
+      if (cfg.ai.dailyLimitUSD != null) $('aiLimit').value = String(cfg.ai.dailyLimitUSD);
+    }
+    if (cfg.accounting) {
+      $('accEnabled').checked = !!cfg.accounting.enabled;
+      toggleNested('accNested', !!cfg.accounting.enabled);
+      $('accPrimary').value = cfg.accounting.primaryEmail || '';
+      $('accSecondary').value = (cfg.accounting.secondaryEmails || []).join(', ');
+      $('accEracuni').value = cfg.accounting.eRacuniInbox || '';
+    }
+    if (cfg.bank) {
+      $('bankName').value = cfg.bank.name || '';
+      $('bankAccount').value = cfg.bank.accountNumber || '';
+      $('bankSender').value = cfg.bank.statementSenderEmail || '';
+      if (cfg.bank.parser) $('bankParser').value = cfg.bank.parser;
+    }
+  } catch (e) { console.warn('pre-fill fail', e); }
+}
+
+function parseCityPostal(s) {
+  const m = String(s || '').match(/^\s*(\d{4,5})\s+(.+)$/);
+  if (m) return { postalCode: m[1], city: m[2].trim() };
+  return { postalCode: '', city: String(s || '').trim() };
+}
+
+async function saveConfig(skipMode) {
+  const btn = $('saveBtn'); btn.disabled = true;
+  const cityParse = parseCityPostal($('supCity').value);
+  const updates = {
+    folders: {
+      root: $('folderRoot').value.trim(),
+      incomingInvoices: $('folderIncoming').value.trim() || 'Invoice {year}',
+      bankStatements: $('folderBank').value.trim() || 'Izvodi {year}',
+      outgoingInvoices: $('folderOutgoing').value.trim() || 'Izlazni racuni {year}',
+      accountantDocs: $('folderAccDocs').value.trim() || 'Knjigovodstvo dokumenti',
+    },
+    supplier: {
+      name: $('supName').value.trim(),
+      oib: $('supOib').value.trim(),
+      address: $('supAddress').value.trim(),
+      city: cityParse.city,
+      postalCode: cityParse.postalCode,
+      country: 'HR',
+      iban: $('supIban').value.trim(),
+      bank: $('supBank').value.trim(),
+      email: $('supEmail').value.trim(),
+    },
+    ui: {
+      currency: $('supCurrency').value,
+      appName: 'libro',
+      locale: 'hr',
+    },
+    ai: {
+      enabled: $('aiEnabled').checked,
+      provider: 'anthropic',
+      model: $('aiModel').value,
+      dailyLimitUSD: Number($('aiLimit').value) || 2,
+    },
+    accounting: {
+      enabled: $('accEnabled').checked,
+      primaryEmail: $('accPrimary').value.trim(),
+      secondaryEmails: $('accSecondary').value.split(',').map(s => s.trim()).filter(Boolean),
+      eRacuniInbox: $('accEracuni').value.trim(),
+      autoForwardBankStatements: false,
+    },
+    bank: {
+      parser: $('bankParser').value,
+      name: $('bankName').value.trim(),
+      accountNumber: $('bankAccount').value.trim(),
+      statementSenderEmail: $('bankSender').value.trim(),
+    },
+  };
+
+  // Validacija
+  if (!skipMode) {
+    if (!updates.folders.root) {
+      showToast('Folder za račune je obavezan (Step 1)', true); btn.disabled = false; return;
+    }
+    if (updates.accounting.enabled && !updates.accounting.primaryEmail) {
+      showToast('Knjigovodstvo uključen — primarni email je obavezan (Step 4)', true); btn.disabled = false; return;
+    }
+  }
+
+  // Spremi AI key u .env (preko poseban endpoint ako bi se dodalo). Za sad: instrukcije.
+  const aiKey = $('aiKey').value.trim();
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config: updates, markComplete: true }),
+    });
+    const j = await res.json();
+    if (!res.ok || !j.success) {
+      throw new Error(j.error || 'Spremanje neuspjelo');
+    }
+
+    if (aiKey) {
+      // Prikaži instrukcije za .env upis (server-side update .env nije implementiran zbog sigurnosti).
+      alert(
+        'Config spremljen ✓\n\n' +
+        'Za AI key dodaj u .env fajl:\n' +
+        'ANTHROPIC_API_KEY=' + aiKey + '\n\n' +
+        'Pa restartaj server (`npm start`).'
+      );
+    } else {
+      showToast('Setup gotov ✓ Otvaram dashboard…');
+    }
+    setTimeout(() => { window.location.href = '/dashboard.html'; }, 800);
+  } catch (e) {
+    showToast('Greška: ' + e.message, true);
+    btn.disabled = false;
+  }
+}
+
+loadExisting();
+</script>
+</body>
+</html>

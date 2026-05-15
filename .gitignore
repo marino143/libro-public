@@ -57,3 +57,12 @@ Thumbs.db
 # ─── Logs ────────────────────────────────────────────────────────────────
 /tmp/libro-*.log
 *.log
+
+# Local Netlify folder
+.netlify
+
+# ─── Demo exception ──────────────────────────────────────────────────────
+# Demo build u demo/ shippa pre-baked Acme Studio podatke (lažni) — pa
+# config/data fajlovi u demo/ moraju ići u git, override-amo gornje patterne.
+!demo/libro-config.json
+!demo/libro-data.json

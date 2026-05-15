@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>libro · demo</title>
+<meta name="description" content="libro — lokalno osobno računovodstvo. Interaktivni demo (Acme Studio d.o.o.)">
+<meta property="og:title" content="libro · demo">
+<meta property="og:description" content="Lokalno osobno računovodstvo. Skenira PDF račune i bankovne izvode iz lokalnog foldera, matcha uplate s računima, AI parsira nepoznate dokumente.">
+<meta property="og:url" content="https://libro-demo.netlify.app">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    background: #f6f3ed; color: #1a1a1a;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 80px 28px 100px; }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 76px; font-weight: 400;
+    letter-spacing: -0.03em;
+    margin: 0 0 6px; line-height: 1;
+  }
+  .tagline {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 300;
+    color: #555;
+    font-style: italic;
+    margin: 0 0 48px;
+  }
+  .demo-pill {
+    display: inline-block;
+    background: linear-gradient(90deg, #f5a623 0%, #f76b1c 100%);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .intro {
+    font-size: 17px; line-height: 1.7; color: #2a2a2a;
+    margin-bottom: 36px;
+  }
+  .intro p { margin: 0 0 16px; }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    border: 1px solid #1a1a1a;
+    transition: transform 0.1s;
+  }
+  .cta:active { transform: scale(0.98); }
+  .cta.primary { background: #1a1a1a; color: #fff; }
+  .cta.primary:hover { background: #000; }
+  .cta.secondary { background: transparent; color: #1a1a1a; }
+  .cta.secondary:hover { background: rgba(0,0,0,0.05); }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px; font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+  .features {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+  .f {
+    background: #fff;
+    border: 1px solid #e6e0d3;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .f h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+  .f p { margin: 0; font-size: 13px; color: #555; line-height: 1.5; }
+  .meta {
+    margin-top: 56px; padding-top: 24px;
+    border-top: 1px solid #e6e0d3;
+    font-size: 13px; color: #777;
+  }
+  .meta code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(0,0,0,0.04);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .meta a { color: #1a1a1a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="demo-pill">🎮 Demo · Acme Studio d.o.o.</div>
+  <h1 class="brand">libro</h1>
+  <p class="tagline">osobno računovodstvo</p>
+
+  <div class="intro">
+    <p>Lokalno osobno računovodstvo. Skenira PDF račune i bankovne izvode iz tvog foldera, matcha uplate s računima, AI parsira nepoznate dokumente, i opcionalno forwardira knjigovođi.</p>
+    <p>Sve ostaje lokalno — folderi na tvom disku, server na localhost-u, AI poziva direktno Anthropic API. Bez SaaS-a, bez čuvanja podataka na tuđim serverima.</p>
+  </div>
+
+  <div class="cta-row">
+    <a class="cta primary" href="dashboard.html">Otvori dashboard →</a>
+    <a class="cta secondary" href="setup.html">Probaj setup wizard</a>
+    <a class="cta secondary" href="https://github.com/marino143/libro-public" target="_blank">GitHub ↗</a>
+  </div>
+
+  <h2>Što vidiš u demu</h2>
+
+  <div class="features">
+    <div class="f">
+      <h3>📊 Dashboard s lažnim podacima</h3>
+      <p>4 mjeseca podataka za fiktivni "Acme Studio d.o.o." — 18 računa, 31 transakcija, 8 izvoda, 3 klijenta.</p>
+    </div>
+    <div class="f">
+      <h3>🔍 Matching transakcija ↔ računa</h3>
+      <p>Vidiš kako libro spaja uplate s PDF računima (status: MATCHED / MISSING / IGNORED / INCOMING).</p>
+    </div>
+    <div class="f">
+      <h3>📑 Izlazni računi · putni nalozi</h3>
+      <p>Forma za generiranje XML/PDF izlaznog računa, klijent autocomplete, putni nalozi.</p>
+    </div>
+    <div class="f">
+      <h3>💬 AI chat (mock)</h3>
+      <p>U produkciji Claude analizira tvoj libro-data.json. U demu vraća pripremljen odgovor.</p>
+    </div>
+    <div class="f">
+      <h3>⚙️ Setup wizard</h3>
+      <p>5-koraka wizard koji vidi novi korisnik pri prvom pokretanju (folder, firma, AI, knjigovodstvo, banka).</p>
+    </div>
+    <div class="f">
+      <h3>📁 Knjigovodstveni dokumenti</h3>
+      <p>Arhiva PDV obrazaca, JOPPD, godišnjih izvještaja — sve s retention politikama.</p>
+    </div>
+  </div>
+
+  <div class="meta">
+    Demo je read-only — sve <code>POST</code> akcije (upload, rebuild, send mail) su no-op-i. Za stvarno korištenje:
+    <code>git clone https://github.com/marino143/libro-public</code> →
+    <code>node libro-server.mjs</code> → otvori <code>localhost:8765</code>.
+    <br><br>
+    Vidi <a href="https://github.com/marino143/libro-public#readme" target="_blank">README</a> ·
+    <a href="https://github.com/marino143/libro-public/blob/main/SETUP.md" target="_blank">SETUP vodič</a>.
+  </div>
+</div>
+</body>
+</html>
