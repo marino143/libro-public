@@ -94,12 +94,17 @@
     });
     if (p === '/api/storage-stats') {
       const d = getData();
+      const totalBytes = 4_521_600;
+      const sizeMB = totalBytes / (1024 * 1024);
+      const sizeGB = totalBytes / (1024 * 1024 * 1024);
       return ok({
         success: true,
         year: d.year || '2026',
-        totalBytes: 4_521_600,
+        totalBytes,
         totalFiles: (d.invoices || []).length + (d.statements || []).length * 2,
-        sizeStr: '4.4 MB',
+        sizeMB: Number(sizeMB.toFixed(1)),
+        sizeGB: Number(sizeGB.toFixed(2)),
+        sizeStr: sizeGB >= 0.1 ? sizeGB.toFixed(2) + ' GB' : sizeMB.toFixed(0) + ' MB',
         monthsSpan: 4
       });
     }
