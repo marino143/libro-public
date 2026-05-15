@@ -1524,7 +1524,6 @@
     .pending-card .pc-amount { font-size: 16px; }
     .docs-summary-bar { grid-template-columns: 1fr 1fr !important; }
   }
-
   /* ─── DEMO mode banner ─── */
   #demo-banner {
     position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
@@ -1546,19 +1545,20 @@
 (function() {
   try {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/setup-status', false);
+    xhr.open('GET', '/api/setup-status', false); // sync — mora završiti prije nego što SUPPLIER definicija na liniji ~6083 izvrši
     xhr.send(null);
     if (xhr.status === 200) {
       var s = JSON.parse(xhr.responseText);
       if (s.firstRun) { window.location.href = '/setup.html'; return; }
     }
-  } catch (e) { /* mock layer should handle */ }
+  } catch (e) { /* server starting? ignore */ }
   try {
     var xhr2 = new XMLHttpRequest();
     xhr2.open('GET', '/api/config', false);
     xhr2.send(null);
     if (xhr2.status === 200) {
       window.LIBRO_CONFIG = JSON.parse(xhr2.responseText);
+      // Sync locale iz configa u i18n (samo prvi put — kasnije localStorage pobjeđuje)
       try {
         if (window.LIBRO_CONFIG && window.LIBRO_CONFIG.ui && window.LIBRO_CONFIG.ui.locale &&
             !localStorage.getItem('libro.locale') &&
@@ -1667,8 +1667,8 @@
         <div class="pending-head-left">
           <div class="pending-icon">!</div>
           <div>
-            <div class="pending-title">Čeka se skidanje računa</div>
-            <div class="pending-desc">Uplate koje nemaju PDF račun — treba ih ručno skinuti ili arhivirati</div>
+            <div class="pending-title" data-i18n="pending.title">Čeka se skidanje računa</div>
+            <div class="pending-desc" data-i18n="pending.desc">Uplate koje nemaju PDF račun — treba ih ručno skinuti ili arhivirati</div>
           </div>
         </div>
         <div class="pending-badge" id="pendingBadge">— ČEKA</div>
@@ -1678,47 +1678,46 @@
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-label">Primljeno (mj.)</div>
+        <div class="stat-label" data-i18n="stats.received">Primljeno (mj.)</div>
         <div class="stat-value" id="statReceivedMonth">—</div>
         <div class="stat-delta" id="statReceivedDelta">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Poslano knj. (mj.)</div>
+        <div class="stat-label" data-i18n="stats.sent-acc">Poslano knj. (mj.)</div>
         <div class="stat-value" id="statForwardedMonth">—<span class="unit" id="statForwardedTotal">/—</span></div>
         <div class="stat-delta neutral" id="statForwardedDelta">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Čeka račun</div>
+        <div class="stat-label" data-i18n="stats.awaiting">Čeka račun</div>
         <div class="stat-value" id="statMissingMonth">—</div>
         <div class="stat-delta pending" id="statMissingAmount">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Troškovi (mj.)</div>
+        <div class="stat-label" data-i18n="stats.costs">Troškovi (mj.)</div>
         <div class="stat-value" id="statExpensesMonth">—<span class="unit">€</span></div>
         <div class="stat-delta neg" id="statExpensesDelta">—</div>
       </div>
     </div>
 
     <div class="tabs" id="inboxTabs">
-      <div class="tab active" data-tab="all">Sve <span class="tab-count" id="tc-all">0</span></div>
-      <div class="tab alert" data-tab="review" title="Računi koji imaju PDF u folderu, ali nisu poslani knjigovodstvu">→ Čeka slanje <span class="tab-count" id="tc-review">0</span></div>
-      <div class="tab" data-tab="forwarded" title="Računi već poslani knjigovodstvu">✓ Poslano <span class="tab-count" id="tc-forwarded">0</span></div>
-      <div class="tab alert" data-tab="pending">◐ Čeka račun <span class="tab-count" id="tc-pending">0</span></div>
-      <div class="tab" data-tab="invoice">Računi <span class="tab-count" id="tc-invoice">0</span></div>
-      <!-- Izvodi i Knjigovodstvo maknuti — dostupni preko "Knjigovodstvo" view-a -->
+      <div class="tab active" data-tab="all"><span data-i18n="tab.all">Sve</span> <span class="tab-count" id="tc-all">0</span></div>
+      <div class="tab alert" data-tab="review" title="Invoices with PDF in folder but not yet sent to accountant"><span data-i18n="tab.pending">→ Čeka slanje</span> <span class="tab-count" id="tc-review">0</span></div>
+      <div class="tab" data-tab="forwarded" title="Invoices already sent to accountant"><span data-i18n="tab.sent">✓ Poslano</span> <span class="tab-count" id="tc-forwarded">0</span></div>
+      <div class="tab alert" data-tab="pending"><span data-i18n="tab.waiting">◐ Čeka račun</span> <span class="tab-count" id="tc-pending">0</span></div>
+      <div class="tab" data-tab="invoice"><span data-i18n="tab.invoices">Računi</span> <span class="tab-count" id="tc-invoice">0</span></div>
       <span style="display:none;" class="tab-count" id="tc-bank">0</span>
       <span style="display:none;" class="tab-count" id="tc-accountant">0</span>
     </div>
 
     <div class="toolbar">
       <div class="search">
-        <input id="inboxSearch" placeholder="Traži po pošiljatelju, subjectu ili iznosu…" oninput="renderList()">
+        <input id="inboxSearch" data-i18n-placeholder="search.placeholder" placeholder="Traži po pošiljatelju, subjectu ili iznosu…" oninput="renderList()">
       </div>
-      <button class="filter-chip" onclick="scanNewInboxFromUi()" style="cursor:pointer;" title="Skeniraj Gmail za nove račune (zadnjih 2 dana)">↻ Osvježi</button>
-      <button class="filter-chip" data-sort-toggle onclick="toggleSortDirection()" style="cursor:pointer;" title="Prebaci sortiranje: najnoviji ↔ najstariji">↓ Najnoviji prvo</button>
-      <button class="filter-chip" onclick="openBulkDrop()" style="background:var(--accent,#8b3a2b);color:var(--bg);cursor:pointer;" title="Drop više PDF-ova odjednom — Claude ih sam sortira">📥 Bulk drop</button>
-      <button class="filter-chip" onclick="openUpload('INVOICE')" style="background:var(--ink);color:var(--bg);cursor:pointer;">+ Račun</button>
-      <button class="filter-chip" onclick="openUpload('BANK')" style="cursor:pointer;">+ Izvod</button>
+      <button class="filter-chip" onclick="scanNewInboxFromUi()" style="cursor:pointer;" data-i18n="btn.refresh-gmail" data-i18n-title="btn.refresh-gmail.title" title="Skeniraj Gmail za nove račune (zadnjih 2 dana)">↻ Osvježi</button>
+      <button class="filter-chip" data-sort-toggle onclick="toggleSortDirection()" style="cursor:pointer;" data-i18n="btn.sort-newest" data-i18n-title="btn.sort-toggle.title" title="Prebaci sortiranje: najnoviji ↔ najstariji">↓ Najnoviji prvo</button>
+      <button class="filter-chip" onclick="openBulkDrop()" style="background:var(--accent,#8b3a2b);color:var(--bg);cursor:pointer;" data-i18n="btn.bulk-drop" data-i18n-title="btn.bulk-drop.title" title="Drop više PDF-ova odjednom — Claude ih sam sortira">📥 Bulk drop</button>
+      <button class="filter-chip" onclick="openUpload('INVOICE')" style="background:var(--ink);color:var(--bg);cursor:pointer;" data-i18n="btn.add-invoice.short">+ Račun</button>
+      <button class="filter-chip" onclick="openUpload('BANK')" style="cursor:pointer;" data-i18n="btn.add-bank.short">+ Izvod</button>
     </div>
 
     <div class="list" id="emailList">
@@ -2689,7 +2688,7 @@ const DEMO_PENDING = [
   { threadId: 'demo2', provider: 'OpenAI', service: 'ChatGPT Plus',
     amount: '22.00 €', date: '2026-04-14T10:00:00Z', daysSince: 7, isOverdue: true,
     billingUrl: 'https://platform.openai.com/account/billing/history', threadUrl: '#' },
-  { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · codigit',
+  { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · Acme',
     amount: '334.00 €', date: '2026-04-08T10:00:00Z', daysSince: 13, isOverdue: true,
     billingUrl: 'https://github.com/settings/billing', threadUrl: '#' },
 ];
@@ -2738,19 +2737,21 @@ function extractMerchantFromSubject(subject, fallback) {
 function renderPending() {
   const container = document.getElementById('pendingCards');
   if (!container) return;
+  const _t = (k, f) => window.LibroI18N ? window.LibroI18N.t(k, f) : f;
+  const _relDays = (n) => window.LibroI18N ? window.LibroI18N.relativeDays(n) : (n === 0 ? 'danas' : n === 1 ? 'jučer' : ('prije ' + n + ' dana'));
   if (pending.length === 0) {
-    container.innerHTML = '<div style="padding:24px;color:var(--ink-soft);font-size:13px;">✓ Nema pending SaaS računa — sve je skinuto.</div>';
+    container.innerHTML = '<div style="padding:24px;color:var(--ink-soft);font-size:13px;">' + _t('pending.empty', '✓ Nema pending SaaS računa — sve je skinuto.') + '</div>';
     document.querySelectorAll('.pending-section').forEach(s => s.style.display = 'none');
   } else {
     document.querySelectorAll('.pending-section').forEach(s => s.style.display = '');
+    const _paidLabel = _t('pending.paid', 'Plaćeno');
+    const _openPortal = _t('pending.open-portal', '↗ Otvori portal');
+    const _doneLabel = _t('pending.done', '✓ Gotovo');
     container.innerHTML = pending.map(p => {
       const overdue = p.isOverdue;
-      const daysText = p.daysSince === 0 ? 'danas' :
-                       p.daysSince === 1 ? 'jučer' :
-                       `prije ${p.daysSince} dana`;
+      const daysText = _relDays(p.daysSince);
       const dateLabel = p.date ? fmtDate(p.date) : '';
       const amount = p.amount || '';
-      // Ako je Curve, extrahiraj pravi merchant iz subject-a
       const isCurve = /Curve/i.test(p.provider || '');
       const realMerchant = isCurve ? extractMerchantFromSubject(p.subject, p.provider) : p.provider;
       const displayService = isCurve
@@ -2766,12 +2767,12 @@ function renderPending() {
             <div class="pc-amount">${amount}</div>
           </div>
           <div class="pc-meta">
-            <span>${dateLabel ? 'Plaćeno ' + dateLabel : p.subject || ''}</span>
+            <span>${dateLabel ? _paidLabel + ' ' + dateLabel : p.subject || ''}</span>
             <span class="pc-days ${overdue ? 'overdue' : ''}">${overdue ? '⚠ ' : ''}${daysText}</span>
           </div>
           <div class="pc-actions">
-            <a class="pc-btn primary" href="${p.billingUrl}" target="_blank" rel="noopener">↗ Otvori portal</a>
-            <button class="pc-btn" onclick="markDone('${p.threadId}')">✓ Gotovo</button>
+            <a class="pc-btn primary" href="${p.billingUrl}" target="_blank" rel="noopener">${_openPortal}</a>
+            <button class="pc-btn" onclick="markDone('${p.threadId}')">${_doneLabel}</button>
           </div>
         </div>
       `;
@@ -2780,7 +2781,7 @@ function renderPending() {
 
   // Update counts
   const badge = document.getElementById('pendingBadge');
-  if (badge) badge.textContent = pending.length + ' ČEKA';
+  if (badge) badge.textContent = pending.length + ' ' + _t('pending.badge', 'ČEKA');
   document.querySelectorAll('.tab.alert .tab-count, .nav-item.alert .nav-count').forEach(el => {
     el.textContent = pending.length;
   });
@@ -3420,7 +3421,9 @@ function selectEmail(id) {
   document.querySelectorAll('.row').forEach(r => r.classList.remove('selected'));
   const row = document.querySelector(`[data-id="${id}"]`);
   if (row) row.classList.add('selected');
-  renderDetail(emails.find(e => e.id === id));
+  const _e = emails.find(e => e.id === id);
+  window._lastSelectedEmail = _e;
+  renderDetail(_e);
   // Na mobitelu otvori detail drawer
   if (window.matchMedia('(max-width: 900px)').matches) {
     document.body.classList.add('detail-open');
@@ -3428,16 +3431,17 @@ function selectEmail(id) {
 }
 
 function renderDetail(e) {
+  const _td = (k, f) => window.LibroI18N ? window.LibroI18N.t(k, f) : f;
   if (!e) {
-    detail.innerHTML = '<div style="padding:60px 24px;text-align:center;color:var(--ink-faint);">Odaberi stavku</div>';
+    detail.innerHTML = '<div style="padding:60px 24px;text-align:center;color:var(--ink-faint);">' + _td('detail.choose', 'Odaberi stavku') + '</div>';
     return;
   }
 
   const timeline = e.timeline && e.timeline.length ? e.timeline : [
-    { when: e.dateFull, text: 'PDF u folderu (Invoice 2026/)', done: !!e.archived },
+    { when: e.dateFull, text: _td('detail.process.in-folder', 'PDF u folderu') + ' (' + (e.localPath || '').split('/').slice(0, 1) + '/)', done: !!e.archived },
     e.forwarded
-      ? { when: (e.forwardedAt ? fmtDate(e.forwardedAt) : e.dateFull), text: '📧 Poslano knjigovodstvu', done: true }
-      : { when: '—', text: 'Nije poslano knjigovodstvu (klikni "📧 Pošalji")', done: false, alert: true },
+      ? { when: (e.forwardedAt ? fmtDate(e.forwardedAt) : e.dateFull), text: '📧 ' + _td('detail.forwarded.title', '✓ Poslano knjigovodstvu').replace(/^✓\s*/, ''), done: true }
+      : { when: '—', text: _td('detail.process.not-sent', 'Nije poslano knjigovodstvu (klikni "📧 Pošalji")'), done: false, alert: true },
   ];
 
   const headClass = e.isPending ? 'detail-head pending' : 'detail-head';
@@ -3452,55 +3456,58 @@ function renderDetail(e) {
     </div>
   ` : '';
 
+  // i18n helpers
+  const _t = (k, f) => window.LibroI18N ? window.LibroI18N.t(k, f) : f;
+
   // Review panel — samo za INVOICE koji nisu forwardani
   const reviewSection = (e.type === 'invoice' && !e.forwarded && e.driveId) ? `
     <div class="detail-section" style="background:var(--pending-soft);border-top:2px solid var(--pending);">
-      <div class="section-title" style="color:var(--pending);">→ Čeka slanje knjigovodstvu</div>
+      <div class="section-title" style="color:var(--pending);">${_t('detail.review.title', '→ Čeka slanje knjigovodstvu')}</div>
       <div style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;">
-        Označi je li ovaj račun za FIRMU ili PRIVATNO, pa pošalji.
+        ${_t('detail.scope.instruction', 'Označi je li ovaj račun za FIRMU ili PRIVATNO, pa pošalji.')}
       </div>
       <div style="display:flex;gap:6px;margin-bottom:10px;">
         <label style="flex:1;padding:8px 10px;border:1px solid ${e.scope === 'COMPANY' ? 'var(--ink)' : 'var(--line)'};background:${e.scope === 'COMPANY' ? 'var(--ink)' : 'transparent'};color:${e.scope === 'COMPANY' ? 'var(--bg)' : 'var(--ink)'};border-radius:6px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;">
           <input type="radio" name="scope-${e.id}" value="COMPANY" ${e.scope === 'COMPANY' ? 'checked' : ''} style="display:none;" onchange="setEmailScope('${e.driveId}', 'COMPANY')">
-          FIRMA
+          ${_t('detail.scope.company', 'FIRMA')}
         </label>
         <label style="flex:1;padding:8px 10px;border:1px solid ${e.scope === 'PRIVATE' ? 'var(--ink)' : 'var(--line)'};background:${e.scope === 'PRIVATE' ? 'var(--ink)' : 'transparent'};color:${e.scope === 'PRIVATE' ? 'var(--bg)' : 'var(--ink)'};border-radius:6px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;">
           <input type="radio" name="scope-${e.id}" value="PRIVATE" ${e.scope === 'PRIVATE' ? 'checked' : ''} style="display:none;" onchange="setEmailScope('${e.driveId}', 'PRIVATE')">
-          PRIVATNO
+          ${_t('detail.scope.private', 'PRIVATNO')}
         </label>
       </div>
       ${e.scope === 'PRIVATE'
-        ? '<div style="font-size:12px;color:var(--ink-soft);">Privatni računi se ne šalju knjigovodstvu — arhiva je dovoljna.</div>'
-        : `<button class="btn btn-primary" onclick="forwardInvoiceNow('${e.driveId}')" style="width:100%;">→ Pošalji knjigovodstvu</button>`
+        ? `<div style="font-size:12px;color:var(--ink-soft);">${_t('detail.scope.private-note', 'Privatni računi se ne šalju knjigovodstvu — arhiva je dovoljna.')}</div>`
+        : `<button class="btn btn-primary" onclick="forwardInvoiceNow('${e.driveId}')" style="width:100%;">${_t('detail.send-acc', '→ Pošalji knjigovodstvu')}</button>`
       }
     </div>
   ` : '';
 
   const forwardedBadge = e.forwarded ? `
     <div class="detail-section" style="background:rgba(62,106,66,0.1);border-top:2px solid var(--ok, #3e6a42);">
-      <div class="section-title" style="color:var(--ok, #3e6a42);">✓ Poslano knjigovodstvu</div>
+      <div class="section-title" style="color:var(--ok, #3e6a42);">${_t('detail.forwarded.title', '✓ Poslano knjigovodstvu')}</div>
       <div style="font-size:12px;color:var(--ink-soft);">${escHtml(e.forwardedAt ? fmtDate(e.forwardedAt) : '')}</div>
     </div>
   ` : (e.localPath ? `
     <div class="detail-section" style="background:var(--pending-soft);border-top:2px solid var(--pending, #b85c2b);">
-      <div class="section-title" style="color:var(--pending);">◐ PDF je u folderu, ali NIJE poslan knjigovodstvu</div>
-      <div style="font-size:12px;color:var(--ink-soft);">Klikni "📧 Pošalji knjigovodstvu" dolje</div>
+      <div class="section-title" style="color:var(--pending);">${_t('detail.notforwarded.title', '◐ PDF je u folderu, ali NIJE poslan knjigovodstvu')}</div>
+      <div style="font-size:12px;color:var(--ink-soft);">${_t('detail.notforwarded.body', 'Klikni "📧 Pošalji knjigovodstvu" dolje')}</div>
     </div>
   ` : '');
 
-  // URL gdje se nalazi online + napomene (iz libro-invoice-metadata.json)
+  // URL gdje se nalazi online + napomene
   const metadataSection = e.localPath ? `
     <div class="detail-section">
       <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>🔗 Online lokacija &amp; napomene</span>
-        <button class="btn" style="padding:2px 8px;font-size:10px;" onclick="editInvoiceMetadata('${escHtml(e.localPath)}', '${escHtml(e.sourceUrl || '')}', '${escHtml(e.notes || '')}')" title="Uredi URL/napomene">✏ Uredi</button>
+        <span>${_t('detail.location.title', '🔗 Online lokacija & napomene')}</span>
+        <button class="btn" style="padding:2px 8px;font-size:10px;" onclick="editInvoiceMetadata('${escHtml(e.localPath)}', '${escHtml(e.sourceUrl || '')}', '${escHtml(e.notes || '')}')" title="${_t('detail.location.edit', '✏ Uredi')}">${_t('detail.location.edit', '✏ Uredi')}</button>
       </div>
       ${e.sourceUrl ? `
         <div style="margin-bottom:8px;">
           <a href="${escHtml(e.sourceUrl)}" target="_blank" rel="noopener" style="color:var(--ok,#3e6a42);font-size:13px;word-break:break-all;">${escHtml(e.sourceUrl.length > 80 ? e.sourceUrl.slice(0, 80) + '…' : e.sourceUrl)} ↗</a>
         </div>
       ` : `
-        <div style="font-size:12px;color:var(--ink-faint);font-style:italic;margin-bottom:8px;">Bez URL-a. Klikni ✏ Uredi da dodaš portal link za sljedeći put.</div>
+        <div style="font-size:12px;color:var(--ink-faint);font-style:italic;margin-bottom:8px;">${_t('detail.location.empty', 'Bez URL-a. Klikni ✏ Uredi da dodaš portal link za sljedeći put.')}</div>
       `}
       ${e.notes ? `
         <div style="font-size:12px;color:var(--ink);padding:8px 10px;background:#f5f2ea;border-radius:4px;white-space:pre-wrap;">${escHtml(e.notes)}</div>
@@ -3510,13 +3517,13 @@ function renderDetail(e) {
 
   const attachSection = e.attachment ? `
     <div class="detail-section">
-      <div class="section-title">Prilog · arhiviran</div>
+      <div class="section-title">${_td('detail.attachment.title', 'Prilog · arhiviran')}</div>
       <div class="attachment">
         <div class="attach-icon">PDF</div>
         <div class="attach-info">
           <div class="attach-name">${escHtml(e.attachment)}</div>
-          ${e.localPath ? `<div class="attach-path"><a href="#" onclick="openLocalFile('${escHtml(e.localPath)}');return false;">Otvori PDF →</a> · <span style="color:var(--ink-faint);">${escHtml(e.localPath)}</span></div>` : ''}
-          ${!e.localPath && e.driveUrl ? `<div class="attach-path"><a href="${e.driveUrl}" target="_blank" rel="noopener">Otvori u Drive →</a></div>` : ''}
+          ${e.localPath ? `<div class="attach-path"><a href="#" onclick="openLocalFile('${escHtml(e.localPath)}');return false;">${_td('detail.attachment.open', 'Otvori PDF →')}</a> · <span style="color:var(--ink-faint);">${escHtml(e.localPath)}</span></div>` : ''}
+          ${!e.localPath && e.driveUrl ? `<div class="attach-path"><a href="${e.driveUrl}" target="_blank" rel="noopener">${_td('detail.attachment.open-drive', 'Otvori u Drive →')}</a></div>` : ''}
         </div>
       </div>
     </div>
@@ -3559,19 +3566,19 @@ function renderDetail(e) {
     const periodEsc = escHtml(e.period || '');
     if (e.forwarded) {
       actionsHtml = `
-        <button class="btn" onclick="sendInvoiceEmail('${pathEsc}', '${supplierEsc}', '${periodEsc}')">↻ Pošalji ponovo</button>
-        <button class="btn" onclick="unmarkInvoiceEmailSent('${pathEsc}')" title="Skini oznaku poslano">↶ Nije poslano</button>
+        <button class="btn" onclick="sendInvoiceEmail('${pathEsc}', '${supplierEsc}', '${periodEsc}')">${_td('detail.btn.resend', '↻ Pošalji ponovo')}</button>
+        <button class="btn" onclick="unmarkInvoiceEmailSent('${pathEsc}')" title="${_td('detail.btn.unmark.title', 'Skini oznaku poslano')}">${_td('detail.btn.unmark', '↶ Nije poslano')}</button>
       `;
     } else {
       actionsHtml = `
-        <button class="btn btn-primary" onclick="sendInvoiceEmail('${pathEsc}', '${supplierEsc}', '${periodEsc}')">📧 Pošalji knjigovodstvu</button>
-        <button class="btn" onclick="markInvoiceEmailSent('${pathEsc}', '${supplierEsc}')" title="Već sam poslao iz Gmaila ili direktno">✓ Već poslano</button>
+        <button class="btn btn-primary" onclick="sendInvoiceEmail('${pathEsc}', '${supplierEsc}', '${periodEsc}')">${_td('detail.btn.send-acc', '📧 Pošalji knjigovodstvu')}</button>
+        <button class="btn" onclick="markInvoiceEmailSent('${pathEsc}', '${supplierEsc}')" title="${_td('detail.btn.already-sent.title', 'Već sam poslao iz Gmaila ili direktno')}">${_td('detail.btn.already-sent', '✓ Već poslano')}</button>
       `;
     }
   } else if (e.forwarded) {
-    actionsHtml = '<button class="btn">↻ Ponovi prosljeđivanje</button>';
+    actionsHtml = `<button class="btn">${_td('detail.btn.resend-fwd', '↻ Ponovi prosljeđivanje')}</button>`;
   } else {
-    actionsHtml = '<button class="btn btn-primary">→ Proslijedi knjigovođi</button>';
+    actionsHtml = `<button class="btn btn-primary">${_td('detail.btn.forward-acc', '→ Proslijedi knjigovođi')}</button>`;
   }
 
   detail.innerHTML = `
@@ -3594,7 +3601,7 @@ function renderDetail(e) {
     ${attachSection}
     ${bodySection}
     <div class="detail-section" style="padding-bottom:8px;">
-      <div class="section-title">Tijek obrade</div>
+      <div class="section-title">${_td('detail.process.title', 'Tijek obrade')}</div>
     </div>
     <div class="timeline">
       ${timeline.map(t => `
@@ -3609,7 +3616,7 @@ function renderDetail(e) {
     </div>
     <div class="actions">
       ${actionsHtml}
-      ${e.localPath ? `<button class="btn" onclick="openLocalFile('${escHtml(e.localPath)}')">📂 Otvori PDF</button>` : ''}
+      ${e.localPath ? `<button class="btn" onclick="openLocalFile('${escHtml(e.localPath)}')">${_td('detail.btn.open-pdf', '📄 Otvori PDF')}</button>` : ''}
     </div>
   `;
 }
@@ -5347,42 +5354,54 @@ function updateInboxHeader() {
   const missingTxAll = transactions.filter(t => t.status === 'MISSING' && t.direction === 'OUT');
   const missingAmount = missingTx.reduce((s, t) => s + Number(t.amount || 0), 0);
 
-  // Header
+  // Header (i18n-aware)
+  const _i18n = window.LibroI18N;
+  const _mName = _i18n ? _i18n.monthName(curMonth) : HR_MONTHS[curMonth];
+  const _prevMName = _i18n ? _i18n.monthName(prevMonth) : HR_MONTHS[prevMonth];
   const titleEl = document.getElementById('inboxTitle');
   const subtitleEl = document.getElementById('inboxSubtitle');
   const monthLabelEl = document.getElementById('inboxMonthLabel');
-  if (titleEl) titleEl.textContent = HR_MONTHS[curMonth] + ' ' + curYear;
-  if (monthLabelEl) monthLabelEl.textContent = HR_MONTHS[curMonth].toUpperCase() + ' · ' + curYear;
+  if (titleEl) titleEl.textContent = _mName + ' ' + curYear;
+  if (monthLabelEl) monthLabelEl.textContent = _mName.toUpperCase() + ' · ' + curYear;
   if (subtitleEl) {
-    const parts = [totalThisMonth + ' nove stavke ' + HR_MONTHS[curMonth].toLowerCase()];
-    if (missingTxAll.length > 0) parts.push('<em>' + missingTxAll.length + ' uplata bez računa (ukupno)</em>');
+    const _newLabel = _i18n
+      ? _i18n.tf('inbox.subtitle.short', { newCount: totalThisMonth }, totalThisMonth + ' nove stavke ' + _mName.toLowerCase())
+      : (totalThisMonth + ' nove stavke ' + _mName.toLowerCase());
+    const parts = [_newLabel];
+    if (missingTxAll.length > 0) {
+      const _missingText = _i18n
+        ? _i18n.tf('inbox.missing-total', { count: missingTxAll.length }, missingTxAll.length + ' uplata bez računa (ukupno)')
+        : (missingTxAll.length + ' uplata bez računa (ukupno)');
+      parts.push('<em>' + _missingText + '</em>');
+    }
     subtitleEl.innerHTML = parts.join(' · ');
   }
 
   // Stats
   const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  const _vsLabel = _i18n ? _i18n.t('stats.vs-prev', 'vs.') : 'vs.';
+  const _queuedLabel = _i18n ? _i18n.t('stats.queued', 'na čekanju') : 'na čekanju';
   setText('statReceivedMonth', totalThisMonth);
   const recDelta = totalThisMonth - invoicesPrevMonth.length;
-  setText('statReceivedDelta', (recDelta >= 0 ? '+' : '') + recDelta + ' vs. ' + HR_MONTHS[prevMonth].toLowerCase());
+  setText('statReceivedDelta', (recDelta >= 0 ? '+' : '') + recDelta + ' ' + _vsLabel + ' ' + _prevMName.toLowerCase());
 
   setText('statForwardedMonth', sentThisMonth);
   setText('statForwardedTotal', '/' + totalThisMonth);
-  setText('statForwardedDelta', (totalThisMonth - sentThisMonth) + ' na čekanju');
+  setText('statForwardedDelta', (totalThisMonth - sentThisMonth) + ' ' + _queuedLabel);
 
-  // Missing TX (cijela godina, ne samo mjesec — bolja informacija)
   setText('statMissingMonth', missingTxAll.length);
   setText('statMissingAmount', missingAmount.toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 0 }) + ' € (mj.)');
 
   setText('statExpensesMonth', expensesThisMonth.toLocaleString('hr-HR', { maximumFractionDigits: 0 }));
   const expSign = expDelta >= 0 ? '+' : '';
-  setText('statExpensesDelta', expSign + expDelta.toLocaleString('hr-HR', { maximumFractionDigits: 0 }) + ' € vs. ' + HR_MONTHS[prevMonth].toLowerCase());
+  setText('statExpensesDelta', expSign + expDelta.toLocaleString('hr-HR', { maximumFractionDigits: 0 }) + ' € ' + _vsLabel + ' ' + _prevMName.toLowerCase());
 
-  // Pending section: prikazuje samo ako ima missing
+  // Pending section
   const pendingWrap = document.getElementById('pendingSectionWrap');
   const pendingBadge = document.getElementById('pendingBadge');
   if (missingTxAll.length > 0) {
     if (pendingWrap) pendingWrap.style.display = '';
-    if (pendingBadge) pendingBadge.textContent = missingTxAll.length + ' ČEKA';
+    if (pendingBadge) pendingBadge.textContent = missingTxAll.length + ' ' + (_i18n ? _i18n.t('pending.badge', 'ČEKA') : 'ČEKA');
   } else {
     if (pendingWrap) pendingWrap.style.display = 'none';
   }
@@ -5390,8 +5409,23 @@ function updateInboxHeader() {
 
 // Auto-update kad se LIBRO_LOCAL_DATA promijeni
 document.addEventListener('DOMContentLoaded', () => {
-  // Pokušaj odmah, plus svaki put kad se podaci osvježe
   setTimeout(updateInboxHeader, 500);
+});
+
+// Re-render dynamic content when user toggles HR↔EN
+window.addEventListener('libro:locale-change', () => {
+  try {
+    if (typeof updateInboxHeader === 'function') updateInboxHeader();
+    if (typeof renderPending === 'function') renderPending();
+    if (typeof renderList === 'function') renderList();
+    if (typeof renderDetail === 'function' && window._lastSelectedEmail) renderDetail(window._lastSelectedEmail);
+    // Update sort-toggle button text (it reads current sortDirection)
+    document.querySelectorAll('[data-sort-toggle]').forEach(el => {
+      el.textContent = (typeof sortDirection !== 'undefined' && sortDirection === 'asc')
+        ? (window.LibroI18N ? window.LibroI18N.t('btn.sort-oldest', '↑ Najstariji prvo') : '↑ Najstariji prvo')
+        : (window.LibroI18N ? window.LibroI18N.t('btn.sort-newest', '↓ Najnoviji prvo') : '↓ Najnoviji prvo');
+    });
+  } catch (e) { console.warn('locale-change re-render failed:', e); }
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -6577,13 +6611,13 @@ let accountingDocs = [];
 const DEMO_ACCOUNTING_DOCS = [
   // ──────────── 2026 (aktivna) ────────────
   { id: 1, year: 2026, period: 'Travanj 2026', type: 'PDV obrazac', category: 'Mjesečni',
-    filename: 'PDV_04-2026_codigit.pdf', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'PDV_04-2026_acme.pdf', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
     size: 186, retention: 11 },
   { id: 2, year: 2026, period: 'Travanj 2026', type: 'JOPPD', category: 'Mjesečni',
     filename: 'JOPPD_04-2026.xml', receivedDate: '21.04.2026', receivedFrom: 'acc@example.com',
     size: 42, retention: 'permanent', retentionNote: 'Mirovinska evidencija — čuva se trajno' },
   { id: 3, year: 2026, period: 'Ožujak 2026', type: 'PDV obrazac', category: 'Mjesečni',
-    filename: 'PDV_03-2026_codigit.pdf', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
+    filename: 'PDV_03-2026_acme.pdf', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
     size: 178, retention: 11 },
   { id: 4, year: 2026, period: 'Ožujak 2026', type: 'JOPPD', category: 'Mjesečni',
     filename: 'JOPPD_03-2026.xml', receivedDate: '19.03.2026', receivedFrom: 'acc@example.com',
@@ -6600,13 +6634,13 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2025 (završena — puna godina) ────────────
   { id: 10, year: 2025, period: '2025', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'GFI-POD_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 412, retention: 'permanent', retentionNote: 'Godišnji financijski izvještaj — čuva se trajno. Predano u FINU 28.04.2026.' },
   { id: 11, year: 2025, period: '2025', type: 'Bilanca', category: 'Godišnji',
-    filename: 'Bilanca_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'Bilanca_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 198, retention: 'permanent' },
   { id: 12, year: 2025, period: '2025', type: 'Račun dobiti i gubitka', category: 'Godišnji',
-    filename: 'RDG_2025_codigit.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
+    filename: 'RDG_2025_acme.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
     size: 156, retention: 'permanent' },
   { id: 13, year: 2025, period: '2025', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2025.pdf', receivedDate: '25.04.2026', receivedFrom: 'acc@example.com',
@@ -6635,13 +6669,13 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2024 (starija) ────────────
   { id: 30, year: 2024, period: '2024', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'GFI-POD_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 398, retention: 'permanent' },
   { id: 31, year: 2024, period: '2024', type: 'Bilanca', category: 'Godišnji',
-    filename: 'Bilanca_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'Bilanca_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 192, retention: 'permanent' },
   { id: 32, year: 2024, period: '2024', type: 'Račun dobiti i gubitka', category: 'Godišnji',
-    filename: 'RDG_2024_codigit.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
+    filename: 'RDG_2024_acme.pdf', receivedDate: '22.04.2025', receivedFrom: 'acc@example.com',
     size: 148, retention: 'permanent' },
   { id: 33, year: 2024, period: '2024', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2024.pdf', receivedDate: '22.04.2025', receivedFrom: 'marko@stari-knjigovodja.hr',
@@ -6649,7 +6683,7 @@ const DEMO_ACCOUNTING_DOCS = [
 
   // ──────────── 2023 ────────────
   { id: 40, year: 2023, period: '2023', type: 'GFI-POD', category: 'Godišnji',
-    filename: 'GFI-POD_2023_codigit.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',
+    filename: 'GFI-POD_2023_acme.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',
     size: 376, retention: 'permanent' },
   { id: 41, year: 2023, period: '2023', type: 'PD-IPO', category: 'Godišnji',
     filename: 'PD-IPO_2023.pdf', receivedDate: '24.04.2024', receivedFrom: 'marko@stari-knjigovodja.hr',
