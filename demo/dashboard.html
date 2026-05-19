@@ -2681,17 +2681,21 @@ async function rebuildLocalData() {
 // ═══════════════════════════════════════════════════════════
 // DEMO FALLBACK · prikazuje se kad HAS_API === false
 // ═══════════════════════════════════════════════════════════
-const DEMO_PENDING = [
-  { threadId: 'demo1', provider: 'Anthropic', service: 'Claude Pro — mjesečna pretplata',
-    amount: '180.00 €', date: '2026-04-21T10:00:00Z', daysSince: 0, isOverdue: false,
-    billingUrl: 'https://console.anthropic.com/settings/billing', threadUrl: '#' },
-  { threadId: 'demo2', provider: 'OpenAI', service: 'ChatGPT Plus',
-    amount: '22.00 €', date: '2026-04-14T10:00:00Z', daysSince: 7, isOverdue: true,
-    billingUrl: 'https://platform.openai.com/account/billing/history', threadUrl: '#' },
-  { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · Acme',
-    amount: '334.00 €', date: '2026-04-08T10:00:00Z', daysSince: 13, isOverdue: true,
-    billingUrl: 'https://github.com/settings/billing', threadUrl: '#' },
-];
+function _demoPendingList() {
+  const _t = (k, f) => window.LibroI18N ? window.LibroI18N.t(k, f) : f;
+  return [
+    { threadId: 'demo1', provider: 'Anthropic', service: _t('demo.svc.claude-pro', 'Claude Pro — mjesečna pretplata'),
+      amount: '180.00 €', date: '2026-04-21T10:00:00Z', daysSince: 0, isOverdue: false,
+      billingUrl: 'https://console.anthropic.com/settings/billing', threadUrl: '#' },
+    { threadId: 'demo2', provider: 'OpenAI', service: 'ChatGPT Plus',
+      amount: '22.00 €', date: '2026-04-14T10:00:00Z', daysSince: 7, isOverdue: true,
+      billingUrl: 'https://platform.openai.com/account/billing/history', threadUrl: '#' },
+    { threadId: 'demo3', provider: 'GitHub', service: 'GitHub Team · codigit',
+      amount: '334.00 €', date: '2026-04-08T10:00:00Z', daysSince: 13, isOverdue: true,
+      billingUrl: 'https://github.com/settings/billing', threadUrl: '#' },
+  ];
+}
+const DEMO_PENDING = _demoPendingList();
 
 let pending = [];
 
@@ -2804,7 +2808,7 @@ async function loadPending() {
       const res = await apiGet('pending');
       raw = (res && res.items) || [];
     } else {
-      raw = DEMO_PENDING.slice();
+      raw = _demoPendingList();
     }
   } catch (err) {
     console.warn('loadPending failed:', err);
@@ -3085,15 +3089,22 @@ function pendingApiToEmail(p, idx) {
 function statementToEmail(stmt, idx) {
   const dateObj = stmt.date ? new Date(stmt.date) : null;
   const dateShort = fmtDate(dateObj);
-  const xmlPath = stmt.xmlFile ? 'IZVODI CO 2026/' + stmt.xmlFile : '';
+  const _bankCfg = (window.LIBRO_CONFIG && window.LIBRO_CONFIG.bank) || {};
+  const _bankFolder = (window.LIBRO_CONFIG && window.LIBRO_CONFIG.folders && window.LIBRO_CONFIG.folders.bankStatements) || 'Izvodi {year}';
+  const _y = (stmt.date || '').slice(0, 4) || String(new Date().getFullYear());
+  const _bankDir = _bankFolder.replace(/\{year\}/g, _y);
+  const xmlPath = stmt.xmlFile ? _bankDir + '/' + stmt.xmlFile : '';
+  const _statementSenderEmail = _bankCfg.statementSenderEmail || 'izvodi@example-bank.com';
+  const _bankName = _bankCfg.name || (window.LibroI18N ? window.LibroI18N.t('list.status.bank', 'Banka') : 'Banka');
+  const _typeLabel = window.LibroI18N ? window.LibroI18N.t('list.status.bank', 'Izvod') : 'Izvod';
   return {
     id: 'stmt_' + idx,
     type: 'bank',
-    typeLabel: 'Izvod',
+    typeLabel: _typeLabel,
     date: dateShort,
     dateFull: dateShort,
-    sender: 'HPB',
-    senderEmail: 'izvodi@example-bank.com',
+    sender: _bankName,
+    senderEmail: _statementSenderEmail,
     subject: '#' + (stmt.seqFormatted || stmt.seq) + ' · ' + (stmt.xmlFile || ''),
     amount: '', currency: '',
     forwarded: !!stmt.emailSent,
@@ -3103,7 +3114,7 @@ function statementToEmail(stmt, idx) {
     driveUrl: '',
     driveId: xmlPath,
     localPath: xmlPath,
-    pdfPath: stmt.pdfFile ? 'IZVODI CO 2026/' + stmt.pdfFile : '',
+    pdfPath: stmt.pdfFile ? _bankDir + '/' + stmt.pdfFile : '',
     scope: 'COMPANY',
     kindRaw: 'BANK',
     period: (stmt.date || '').slice(0, 7),
@@ -5416,9 +5427,19 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('libro:locale-change', () => {
   try {
     if (typeof updateInboxHeader === 'function') updateInboxHeader();
-    if (typeof renderPending === 'function') renderPending();
+    // Re-build pending list s novim locale-em pa re-render
+    if (typeof loadPending === 'function') loadPending();
+    else if (typeof renderPending === 'function') renderPending();
     if (typeof renderList === 'function') renderList();
-    if (typeof renderDetail === 'function' && window._lastSelectedEmail) renderDetail(window._lastSelectedEmail);
+    if (typeof renderDetail === 'function' && window._lastSelectedEmail) {
+      // Recompute statementToEmail za bank stmts (typeLabel/sender ovise o locale)
+      const _last = window._lastSelectedEmail;
+      if (_last && _last.type === 'bank' && _last.statement && typeof statementToEmail === 'function') {
+        const idx = String(_last.id || '').replace(/^stmt_/, '');
+        window._lastSelectedEmail = statementToEmail(_last.statement, idx);
+      }
+      renderDetail(window._lastSelectedEmail);
+    }
     // Update sort-toggle button text (it reads current sortDirection)
     document.querySelectorAll('[data-sort-toggle]').forEach(el => {
       el.textContent = (typeof sortDirection !== 'undefined' && sortDirection === 'asc')

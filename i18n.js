@@ -254,6 +254,8 @@
       'detail.attachment.open-drive': 'Otvori u Drive →',
       'detail.choose': 'Odaberi stavku',
       'inbox.missing-total': '{count} uplata bez računa (ukupno)',
+      // Demo content strings (HR varijanta — service description za pending cards)
+      'demo.svc.claude-pro': 'Claude Pro — mjesečna pretplata',
 
       // Months (full names for header)
       'month.1': 'Siječanj',
@@ -510,6 +512,8 @@
       'detail.attachment.open-drive': 'Open in Drive →',
       'detail.choose': 'Select an item',
       'inbox.missing-total': '{count} payments without invoice (total)',
+      // Demo content
+      'demo.svc.claude-pro': 'Claude Pro — monthly subscription',
 
       // Months
       'month.1': 'January',
