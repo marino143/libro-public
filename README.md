@@ -190,6 +190,16 @@ Bez dep-a, bez DB-a, bez SaaS-a. Sve fits u par MB.
 
 ---
 
+## Support
+
+Ako ti je libro pomogao spriječiti par stotina ručnih forward-a u Mail.app-u, [kupi mi kavu](https://buymeacoffee.com/marino143). ☕
+
+Ili pošalji issue / PR na GitHubu — feedback je dovoljan.
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/marino143)
+
+---
+
 ## License
 
 Personal use. Adapt slobodno za svoju situaciju.
